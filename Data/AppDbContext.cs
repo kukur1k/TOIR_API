@@ -46,6 +46,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<PriorityWorkOrder> PriorityWorkOrders { get; set; }
 
+    public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
+
     public virtual DbSet<Role> Roles { get; set; }
 
     public virtual DbSet<SheduleTo> SheduleTos { get; set; }
@@ -147,6 +149,18 @@ public partial class AppDbContext : DbContext
         modelBuilder.Entity<EqState>(entity =>
         {
             entity.HasKey(e => new { e.EquipmentId, e.EqStatusId, e.WorkshopId }).HasName("eq_state_pkey");
+
+            entity.HasOne(d => d.EqStatus).WithMany(p => p.EqStates)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("eq_state_eq_status_id_fkey");
+
+            entity.HasOne(d => d.Equipment).WithMany(p => p.EqStates)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("eq_state_equipment_id_fkey");
+
+            entity.HasOne(d => d.Workshop).WithMany(p => p.EqStates)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("eq_state_workshop_id_fkey");
         });
 
         modelBuilder.Entity<EqStatus>(entity =>
@@ -198,6 +212,16 @@ public partial class AppDbContext : DbContext
         modelBuilder.Entity<PriorityWorkOrder>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("priority_work_order_pkey");
+        });
+
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("refresh_tokens_pkey");
+
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("now()");
+            entity.Property(e => e.IsRevoked).HasDefaultValue(false);
+
+            entity.HasOne(d => d.User).WithMany(p => p.RefreshTokens).HasConstraintName("refresh_tokens_user_id_fkey");
         });
 
         modelBuilder.Entity<Role>(entity =>

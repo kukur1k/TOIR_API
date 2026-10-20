@@ -42,8 +42,15 @@ public partial class User
     [Column("status_id")]
     public int? StatusId { get; set; }
 
+    [Column("password_hash")]
+    [StringLength(255)]
+    public string PasswordHash { get; set; } = null!;
+
     [InverseProperty("User")]
     public virtual ICollection<Operation> Operations { get; set; } = new List<Operation>();
+
+    [InverseProperty("User")]
+    public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 
     [ForeignKey("RoleId")]
     [InverseProperty("Users")]

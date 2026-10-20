@@ -41,6 +41,9 @@ public partial class Equipment
     [InverseProperty("Eq")]
     public virtual ICollection<EqHistoryStatusUpdate> EqHistoryStatusUpdates { get; set; } = new List<EqHistoryStatusUpdate>();
 
+    [InverseProperty("Equipment")]
+    public virtual ICollection<EqState> EqStates { get; set; } = new List<EqState>();
+
     [InverseProperty("Eq")]
     public virtual ICollection<SheduleTo> SheduleTos { get; set; } = new List<SheduleTo>();
 

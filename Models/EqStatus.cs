@@ -16,4 +16,7 @@ public partial class EqStatus
     [Column("name")]
     [StringLength(255)]
     public string Name { get; set; } = null!;
+
+    [InverseProperty("EqStatus")]
+    public virtual ICollection<EqState> EqStates { get; set; } = new List<EqState>();
 }

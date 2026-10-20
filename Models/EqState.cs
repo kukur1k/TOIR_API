@@ -21,4 +21,16 @@ public partial class EqState
     [Key]
     [Column("workshop_id")]
     public int WorkshopId { get; set; }
+
+    [ForeignKey("EqStatusId")]
+    [InverseProperty("EqStates")]
+    public virtual EqStatus EqStatus { get; set; } = null!;
+
+    [ForeignKey("EquipmentId")]
+    [InverseProperty("EqStates")]
+    public virtual Equipment Equipment { get; set; } = null!;
+
+    [ForeignKey("WorkshopId")]
+    [InverseProperty("EqStates")]
+    public virtual Workshop Workshop { get; set; } = null!;
 }

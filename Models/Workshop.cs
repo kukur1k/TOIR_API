@@ -20,6 +20,9 @@ public partial class Workshop
     [Column("master_id")]
     public int? MasterId { get; set; }
 
+    [InverseProperty("Workshop")]
+    public virtual ICollection<EqState> EqStates { get; set; } = new List<EqState>();
+
     [ForeignKey("MasterId")]
     [InverseProperty("Workshops")]
     public virtual User? Master { get; set; }
