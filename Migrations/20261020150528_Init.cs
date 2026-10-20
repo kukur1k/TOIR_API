@@ -15,8 +15,6 @@ namespace toir_api.Migrations
             migrationBuilder.EnsureSchema(
                 name: "TOIR");
 
-            migrationBuilder.AlterDatabase()
-                .Annotation("Npgsql:PostgresExtension:pg_catalog.adminpack", ",,");
 
             migrationBuilder.CreateTable(
                 name: "action_type",
