@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TOIR_API.Models;
 
 namespace TOIR_API.Data;
 
-public partial class AppDbContext : DbContext
+public partial class AppDbContext : IdentityDbContext<AppUser>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
@@ -68,6 +69,10 @@ public partial class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.HasPostgresExtension("pg_catalog", "adminpack");
+
         modelBuilder.Entity<ActionType>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("action_type_pkey");
