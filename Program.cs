@@ -40,7 +40,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors();
 app.UseAuthentication();
-app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapGroup("/auth").MapIdentityApi<AppUser>();
 
