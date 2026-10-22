@@ -71,8 +71,6 @@ public partial class AppDbContext : IdentityDbContext<AppUser>
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.HasPostgresExtension("pg_catalog", "adminpack");
-
         modelBuilder.Entity<ActionType>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("action_type_pkey");
