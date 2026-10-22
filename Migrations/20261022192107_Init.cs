@@ -15,7 +15,6 @@ namespace toir_api.Migrations
             migrationBuilder.EnsureSchema(
                 name: "TOIR");
 
-
             migrationBuilder.CreateTable(
                 name: "action_type",
                 schema: "TOIR",
