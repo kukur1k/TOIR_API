@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi;
+using Microsoft.OpenApi.Models;
 using TOIR_API;
 using TOIR_API.Data;
 using TOIR_API.Models;
@@ -17,12 +17,29 @@ builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(s =>
 {
-    s.SwaggerDoc("v1", new Microsoft.OpenApi.OpenApiInfo {Title = "TOIR_API", Version = "1.0"});
+    s.SwaggerDoc("v1", new OpenApiInfo {Title = "TOIR_API", Version = "1.0"});
 
-    s.AddSecurityDefinition("Beearer", new OpenApiSecurityScheme
+    s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Type = SecuritySchemeType.Http,
-        Scheme = "bearer"
+        Scheme = "bearer",
+        BearerFormat="JWT"
+    });
+
+    //понизил версию OpenApi до 1.6 чтобы юзать .Models и swashBuckle до 6.4.0
+    s.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+        {
+        new OpenApiSecurityScheme
+        {
+            Reference = new OpenApiReference
+            {
+                Type = ReferenceType.SecurityScheme,
+                Id = "Bearer"
+            },
+        },
+        new List<string>()
+        }
     });
 });  
 
