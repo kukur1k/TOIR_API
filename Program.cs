@@ -52,11 +52,11 @@ builder.Services.AddSwaggerGen(c =>
     });
 
     // Servers
-    c.AddServer(new OpenApiServer
-    {
-        Url = "http://localhost:5333",
-        Description = "Local development"
-    });
+    // c.AddServer(new OpenApiServer
+    // {
+    //     Url = "http://localhost:5333",
+    //     Description = "Local development"
+    // });
 
     // JWT Security
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

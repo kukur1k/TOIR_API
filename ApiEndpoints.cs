@@ -125,6 +125,32 @@ public static class ApiEndpoints
         await db.SaveChangesAsync();
         return token;
     }
+
+    static void MapDashBoard(WebApplication app)
+    {
+        var g = app.MapGroup("/dashboard").WithTags("Dashboard").RequireAuthorization();
+
+        g.MapGet("/kpi", async (AppDbContext db, JwtService jwt, HttpContext ctx) =>
+        {
+            var uid = jwt.GetUserId(ctx.User);
+
+            //оборудование
+            var totalEqCount = await db.Equipment
+                .CountAsync(e => e.Workshop.MasterId == uid);
+            var brokeEqCount = await db.Equipment
+                .CountAsync(e => e.Workshop.ChiefId == uid && e.EqStatus == "in_repair");
+            var eqCountString = totalEqCount + " / " + brokeEqCount;
+
+            //заявки
+            var statuses = new[] { "new", "in_pcocess", "complete" };
+            var countActiveOrders = await db.WorkOrders
+                .CountAsync(o => o.MasterId == uid && statuses.Contains(o.StatusWo));
+            var countActiveOrdersLost = await db.WorkOrders
+                .CountAsync(o => o.MasterId == uid && statuses.Contains(o.StatusWo) && o.DateEnd < DateTime.UtcNow);
+                
+        });
+
+    }
 }
 
 
