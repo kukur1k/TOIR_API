@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TOIR_API.Models;
 
-[Table("type_to", Schema = "TOIR")]
+[Table("type_to", Schema = "new_TOIR")]
 public partial class TypeTo
 {
     [Key]
@@ -14,23 +14,16 @@ public partial class TypeTo
     public int Id { get; set; }
 
     [Column("title")]
-    [StringLength(255)]
-    public string? Title { get; set; }
+    [StringLength(200)]
+    public string Title { get; set; } = null!;
 
     [Column("description")]
     public string? Description { get; set; }
 
     [Column("interval")]
-    [StringLength(255)]
+    [StringLength(64)]
     public string? Interval { get; set; }
 
-    [Column("duration")]
-    [StringLength(255)]
-    public string? Duration { get; set; }
-
-    [Column("need_stop")]
-    public bool? NeedStop { get; set; }
-
-    [InverseProperty("TypeTo")]
+    [InverseProperty("To")]
     public virtual ICollection<SheduleTo> SheduleTos { get; set; } = new List<SheduleTo>();
 }

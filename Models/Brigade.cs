@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TOIR_API.Models;
 
-[Table("brigade", Schema = "TOIR")]
+[Table("brigade", Schema = "new_TOIR")]
 public partial class Brigade
 {
     [Key]
@@ -14,30 +14,28 @@ public partial class Brigade
     public int Id { get; set; }
 
     [Column("title")]
+    [StringLength(200)]
+    public string Title { get; set; } = null!;
+
+    [Column("brigade_specialisation")]
     [StringLength(255)]
-    public string? Title { get; set; }
+    public string? BrigadeSpecialisation { get; set; }
 
-    [Column("specialisation_id")]
-    public int? SpecialisationId { get; set; }
-
-    [Column("brigade_type_id")]
-    public int? BrigadeTypeId { get; set; }
-
-    [InverseProperty("Brigade")]
-    public virtual ICollection<BrigadeFixation> BrigadeFixations { get; set; } = new List<BrigadeFixation>();
+    [Column("brigade_type")]
+    [StringLength(255)]
+    public string? BrigadeType { get; set; }
 
     [InverseProperty("Brigade")]
     public virtual ICollection<BrigadeShedule> BrigadeShedules { get; set; } = new List<BrigadeShedule>();
 
-    [ForeignKey("BrigadeTypeId")]
-    [InverseProperty("Brigades")]
-    public virtual BrigadeType? BrigadeType { get; set; }
-
-    [ForeignKey("SpecialisationId")]
-    [InverseProperty("Brigades")]
-    public virtual BrigadeSpecialisation? Specialisation { get; set; }
+    [InverseProperty("Brigade")]
+    public virtual ICollection<SheduleTo> SheduleTos { get; set; } = new List<SheduleTo>();
 
     [ForeignKey("BrigadeId")]
     [InverseProperty("Brigades")]
     public virtual ICollection<User> Users { get; set; } = new List<User>();
+
+    [ForeignKey("BrigadeId")]
+    [InverseProperty("Brigades")]
+    public virtual ICollection<Workshop> Workshops { get; set; } = new List<Workshop>();
 }

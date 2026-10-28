@@ -6,7 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TOIR_API.Models;
 
-[Table("user", Schema = "TOIR")]
+[Table("users", Schema = "new_TOIR")]
+[Index("Email", Name = "users_email_key", IsUnique = true)]
 public partial class User
 {
     [Key]
@@ -15,56 +16,59 @@ public partial class User
 
     [Column("email")]
     [StringLength(255)]
-    public string? Email { get; set; }
-
-    [Column("phone")]
-    [StringLength(50)]
-    public string? Phone { get; set; }
-
-    [Column("last_name")]
-    [StringLength(255)]
-    public string? LastName { get; set; }
-
-    [Column("first_name")]
-    [StringLength(255)]
-    public string? FirstName { get; set; }
-
-    [Column("patronymic")]
-    [StringLength(255)]
-    public string? Patronymic { get; set; }
-
-    [Column("date_registration", TypeName = "timestamp without time zone")]
-    public DateTime? DateRegistration { get; set; }
-
-    [Column("role_id")]
-    public int? RoleId { get; set; }
-
-    [Column("status_id")]
-    public int? StatusId { get; set; }
+    public string Email { get; set; } = null!;
 
     [Column("password_hash")]
     [StringLength(255)]
     public string PasswordHash { get; set; } = null!;
 
+    [Column("registered_at", TypeName = "timestamp without time zone")]
+    public DateTime RegisteredAt { get; set; }
+
+    [Column("phone")]
+    [StringLength(32)]
+    public string? Phone { get; set; }
+
+    [Column("last_name")]
+    [StringLength(100)]
+    public string LastName { get; set; } = null!;
+
+    [Column("first_name")]
+    [StringLength(100)]
+    public string FirstName { get; set; } = null!;
+
+    [Column("patronymic")]
+    [StringLength(100)]
+    public string? Patronymic { get; set; }
+
+    [Column("role")]
+    [StringLength(255)]
+    public string Role { get; set; } = null!;
+
+    [Column("status")]
+    [StringLength(255)]
+    public string Status { get; set; } = null!;
+
+    [InverseProperty("LastEditer")]
+    public virtual ICollection<EqHistoryStatusUpdate> EqHistoryStatusUpdates { get; set; } = new List<EqHistoryStatusUpdate>();
+
     [InverseProperty("User")]
     public virtual ICollection<Operation> Operations { get; set; } = new List<Operation>();
+
+    [InverseProperty("LastEditer")]
+    public virtual ICollection<OrderHistoryStatusUpdate> OrderHistoryStatusUpdates { get; set; } = new List<OrderHistoryStatusUpdate>();
 
     [InverseProperty("User")]
     public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 
-    [ForeignKey("RoleId")]
-    [InverseProperty("Users")]
-    public virtual Role? Role { get; set; }
-
-    [ForeignKey("StatusId")]
-    [InverseProperty("Users")]
-    public virtual UserStatus? Status { get; set; }
-
     [InverseProperty("Master")]
     public virtual ICollection<WorkOrder> WorkOrders { get; set; } = new List<WorkOrder>();
 
+    [InverseProperty("Chief")]
+    public virtual ICollection<Workshop> WorkshopChiefs { get; set; } = new List<Workshop>();
+
     [InverseProperty("Master")]
-    public virtual ICollection<Workshop> Workshops { get; set; } = new List<Workshop>();
+    public virtual ICollection<Workshop> WorkshopMasters { get; set; } = new List<Workshop>();
 
     [ForeignKey("UserId")]
     [InverseProperty("Users")]

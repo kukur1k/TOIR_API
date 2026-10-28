@@ -6,34 +6,36 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TOIR_API.Models;
 
-[Table("work_order", Schema = "TOIR")]
+[Table("work_order", Schema = "new_TOIR")]
 public partial class WorkOrder
 {
     [Key]
     [Column("id")]
     public int Id { get; set; }
 
-    [Column("type_id")]
-    public int? TypeId { get; set; }
+    [Column("type_wo")]
+    [StringLength(255)]
+    public string TypeWo { get; set; } = null!;
 
-    [Column("priority_id")]
-    public int? PriorityId { get; set; }
+    [Column("priority")]
+    [StringLength(255)]
+    public string Priority { get; set; } = null!;
 
-    [Column("status_id")]
-    public int? StatusId { get; set; }
+    [Column("status_wo")]
+    [StringLength(255)]
+    public string StatusWo { get; set; } = null!;
 
     [Column("date_create", TypeName = "timestamp without time zone")]
-    public DateTime? DateCreate { get; set; }
+    public DateTime DateCreate { get; set; }
 
     [Column("reason")]
-    [StringLength(255)]
     public string? Reason { get; set; }
 
     [Column("master_id")]
     public int? MasterId { get; set; }
 
     [Column("eq_id")]
-    public int? EqId { get; set; }
+    public int EqId { get; set; }
 
     [Column("plan_date_start")]
     public DateOnly? PlanDateStart { get; set; }
@@ -41,15 +43,15 @@ public partial class WorkOrder
     [Column("plan_date_end")]
     public DateOnly? PlanDateEnd { get; set; }
 
-    [Column("date_start")]
-    public DateOnly? DateStart { get; set; }
+    [Column("date_start", TypeName = "timestamp without time zone")]
+    public DateTime? DateStart { get; set; }
 
-    [Column("date_end")]
-    public DateOnly? DateEnd { get; set; }
+    [Column("date_end", TypeName = "timestamp without time zone")]
+    public DateTime? DateEnd { get; set; }
 
     [ForeignKey("EqId")]
     [InverseProperty("WorkOrders")]
-    public virtual Equipment? Eq { get; set; }
+    public virtual Equipment Eq { get; set; } = null!;
 
     [ForeignKey("MasterId")]
     [InverseProperty("WorkOrders")]
@@ -58,15 +60,6 @@ public partial class WorkOrder
     [InverseProperty("WorkOrder")]
     public virtual ICollection<MaterialsWorkOrder> MaterialsWorkOrders { get; set; } = new List<MaterialsWorkOrder>();
 
-    [ForeignKey("PriorityId")]
-    [InverseProperty("WorkOrders")]
-    public virtual PriorityWorkOrder? Priority { get; set; }
-
-    [ForeignKey("StatusId")]
-    [InverseProperty("WorkOrders")]
-    public virtual StatusWorkOrder? Status { get; set; }
-
-    [ForeignKey("TypeId")]
-    [InverseProperty("WorkOrders")]
-    public virtual TypeWorkOrder? Type { get; set; }
+    [InverseProperty("Order")]
+    public virtual ICollection<OrderHistoryStatusUpdate> OrderHistoryStatusUpdates { get; set; } = new List<OrderHistoryStatusUpdate>();
 }

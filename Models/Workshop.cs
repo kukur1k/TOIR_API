@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TOIR_API.Models;
 
-[Table("workshop", Schema = "TOIR")]
+[Table("workshop", Schema = "new_TOIR")]
 public partial class Workshop
 {
     [Key]
@@ -14,16 +14,27 @@ public partial class Workshop
     public int Id { get; set; }
 
     [Column("title")]
-    [StringLength(255)]
-    public string? Title { get; set; }
+    [StringLength(200)]
+    public string Title { get; set; } = null!;
 
     [Column("master_id")]
     public int? MasterId { get; set; }
 
+    [Column("chief_id")]
+    public int? ChiefId { get; set; }
+
+    [ForeignKey("ChiefId")]
+    [InverseProperty("WorkshopChiefs")]
+    public virtual User? Chief { get; set; }
+
     [InverseProperty("Workshop")]
-    public virtual ICollection<EqState> EqStates { get; set; } = new List<EqState>();
+    public virtual ICollection<Equipment> Equipment { get; set; } = new List<Equipment>();
 
     [ForeignKey("MasterId")]
-    [InverseProperty("Workshops")]
+    [InverseProperty("WorkshopMasters")]
     public virtual User? Master { get; set; }
+
+    [ForeignKey("WorkshopId")]
+    [InverseProperty("Workshops")]
+    public virtual ICollection<Brigade> Brigades { get; set; } = new List<Brigade>();
 }

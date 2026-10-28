@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace TOIR_API.Models;
 
 [PrimaryKey("WorkOrderId", "MaterialId")]
-[Table("materials_work_order", Schema = "TOIR")]
+[Table("materials_work_order", Schema = "new_TOIR")]
 public partial class MaterialsWorkOrder
 {
     [Key]
@@ -19,7 +19,8 @@ public partial class MaterialsWorkOrder
     public int MaterialId { get; set; }
 
     [Column("quantity")]
-    public decimal? Quantity { get; set; }
+    [Precision(14, 3)]
+    public decimal Quantity { get; set; }
 
     [ForeignKey("MaterialId")]
     [InverseProperty("MaterialsWorkOrders")]

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TOIR_API.Models;
 
-[Table("brigade_shedule", Schema = "TOIR")]
+[Table("brigade_shedule", Schema = "new_TOIR")]
 public partial class BrigadeShedule
 {
     [Key]
@@ -14,15 +14,15 @@ public partial class BrigadeShedule
     public int Id { get; set; }
 
     [Column("brigade_id")]
-    public int? BrigadeId { get; set; }
+    public int BrigadeId { get; set; }
 
     [Column("start_date")]
-    public DateOnly? StartDate { get; set; }
+    public DateOnly StartDate { get; set; }
 
     [Column("end_date")]
     public DateOnly? EndDate { get; set; }
 
     [ForeignKey("BrigadeId")]
     [InverseProperty("BrigadeShedules")]
-    public virtual Brigade? Brigade { get; set; }
+    public virtual Brigade Brigade { get; set; } = null!;
 }

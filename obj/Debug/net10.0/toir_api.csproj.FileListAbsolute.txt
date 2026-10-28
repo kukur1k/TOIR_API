@@ -6,7 +6,6 @@ C:\ProfiProjects\TOIR_API\bin\Debug\net10.0\toir_api.deps.json
 C:\ProfiProjects\TOIR_API\bin\Debug\net10.0\toir_api.runtimeconfig.json
 C:\ProfiProjects\TOIR_API\bin\Debug\net10.0\toir_api.dll
 C:\ProfiProjects\TOIR_API\bin\Debug\net10.0\toir_api.pdb
-C:\ProfiProjects\TOIR_API\bin\Debug\net10.0\Microsoft.AspNetCore.OpenApi.dll
 C:\ProfiProjects\TOIR_API\bin\Debug\net10.0\Microsoft.OpenApi.dll
 C:\ProfiProjects\TOIR_API\obj\Debug\net10.0\toir_api.csproj.AssemblyReference.cache
 C:\ProfiProjects\TOIR_API\obj\Debug\net10.0\rpswa.dswa.cache.json
@@ -128,3 +127,9 @@ C:\ProfiProjects\TOIR_API\bin\Debug\net10.0\Microsoft.IdentityModel.Logging.dll
 C:\ProfiProjects\TOIR_API\bin\Debug\net10.0\Microsoft.IdentityModel.Tokens.dll
 C:\ProfiProjects\TOIR_API\bin\Debug\net10.0\System.IdentityModel.Tokens.Jwt.dll
 C:\ProfiProjects\TOIR_API\bin\Debug\net10.0\BCrypt-Net-Next.dll
+C:\ProfiProjects\TOIR_API\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\ProfiProjects\TOIR_API\bin\Debug\net10.0\Microsoft.IdentityModel.Protocols.dll
+C:\ProfiProjects\TOIR_API\bin\Debug\net10.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\ProfiProjects\TOIR_API\bin\Debug\net10.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\ProfiProjects\TOIR_API\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\ProfiProjects\TOIR_API\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerUI.dll

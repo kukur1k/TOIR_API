@@ -22,10 +22,10 @@ namespace TOIR_API.Services
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role.Title)
+                new Claim(ClaimTypes.Role, user.Role)
             };
 
-            // тоен формируем
+            // токен формируем
             var token = new JwtSecurityToken(
                 issuer: config["JwtSettings:Issuer"],
                 audience: config["JwtSettings:Audience"],

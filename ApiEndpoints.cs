@@ -10,7 +10,7 @@ public static class ApiEndpoints
 {
     public static void MapAll(WebApplication app)
     {
-        
+        MapAuth(app);
     }
 
 
@@ -23,9 +23,7 @@ public static class ApiEndpoints
             var err = ValidationService.Check(ValidationService.Validate(req));
             if (err is not null) return err;
 
-            var user = await db.Users
-                .Include(u => u.Role)
-                .FirstOrDefaultAsync(u => u.Email == req.Email);
+            var user = await db.Users.FirstOrDefaultAsync(u => u.Email == req.Email);
 
             if (user is null || !BC.Verify(req.Password, user.PasswordHash)){
                 return Api.Fail("Неверный Email или пароль", 401, "INVALID_CREDENTIALS");
@@ -38,7 +36,7 @@ public static class ApiEndpoints
 
             var refresh = await CreateRefreshToken(user.Id, db);
             return Api.Ok(new AuthResponce(
-                jwt.Generate(user), refresh.Token, user.Role.Title
+                jwt.Generate(user), refresh.Token, user.Role
             ));
 
         }).AllowAnonymous();
@@ -49,7 +47,6 @@ public static class ApiEndpoints
             if (err is not null) return err;
 
             var user = await db.Users
-                .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.Email == req.Email);
 
             if (user is not null)
@@ -63,15 +60,14 @@ public static class ApiEndpoints
                 LastName = req.LastName,
                 Patronymic = req.MiddleName,
                 Phone = req.Phone,
-                RoleId = 1
+                Role = "master"
             };
 
             await db.Users.AddAsync(newUser);
             await db.SaveChangesAsync();
-            await db.Entry(newUser).Reference(u => u.Role).LoadAsync();
             var refresh = await CreateRefreshToken(newUser.Id, db);
             return Api.Ok(new AuthResponce(
-                jwt.Generate(newUser), refresh.Token, newUser.Role.Title
+                jwt.Generate(newUser), refresh.Token, newUser.Role
             ));
         }).AllowAnonymous();
 
@@ -97,7 +93,7 @@ public static class ApiEndpoints
                 return Api.BadRequest("RefreshToken обязателен");
 
             var token = await db.RefreshTokens
-                .Include(t => t.User).ThenInclude(u => u.Role)
+                .Include(t => t.User)
                 .FirstOrDefaultAsync(t => t.Token == req.RefreshToken);
 
             if (token is null || token.IsRevoked == true || token.ExpiresAt < DateTimeOffset.UtcNow)
@@ -111,7 +107,7 @@ public static class ApiEndpoints
             return Api.Ok(new AuthResponce(
                 jwt.Generate(token.User),
                 newRefresh.Token,
-                token.User.Role.Title
+                token.User.Role
             ));
         });
     }

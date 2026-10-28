@@ -6,27 +6,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TOIR_API.Models;
 
-[Table("shedule_to", Schema = "TOIR")]
+[Table("shedule_to", Schema = "new_TOIR")]
 public partial class SheduleTo
 {
     [Key]
     [Column("id")]
     public int Id { get; set; }
 
-    [Column("type_to_id")]
-    public int? TypeToId { get; set; }
-
-    [Column("eq_id")]
-    public int? EqId { get; set; }
-
     [Column("date")]
-    public DateOnly? Date { get; set; }
+    public DateOnly Date { get; set; }
 
-    [ForeignKey("EqId")]
-    [InverseProperty("SheduleTos")]
-    public virtual Equipment? Eq { get; set; }
+    [Column("to_id")]
+    public int ToId { get; set; }
 
-    [ForeignKey("TypeToId")]
+    [Column("brigade_id")]
+    public int BrigadeId { get; set; }
+
+    [ForeignKey("BrigadeId")]
     [InverseProperty("SheduleTos")]
-    public virtual TypeTo? TypeTo { get; set; }
+    public virtual Brigade Brigade { get; set; } = null!;
+
+    [ForeignKey("ToId")]
+    [InverseProperty("SheduleTos")]
+    public virtual TypeTo To { get; set; } = null!;
 }

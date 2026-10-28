@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TOIR_API.Models;
 
-[Table("refresh_tokens", Schema = "TOIR")]
+[Table("refresh_tokens", Schema = "new_TOIR")]
 public partial class RefreshToken
 {
     [Key]
