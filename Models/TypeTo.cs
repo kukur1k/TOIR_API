@@ -26,4 +26,7 @@ public partial class TypeTo
 
     [InverseProperty("To")]
     public virtual ICollection<SheduleTo> SheduleTos { get; set; } = new List<SheduleTo>();
+
+    [InverseProperty("TypeTo")]
+    public virtual ICollection<TimesNormativeTo> TimesNormativeToes { get; set; } = new List<TimesNormativeTo>();
 }

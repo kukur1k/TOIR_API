@@ -34,6 +34,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<SheduleTo> SheduleTos { get; set; }
 
+    public virtual DbSet<TimesNormativeTo> TimesNormativeToes { get; set; }
+
     public virtual DbSet<TypeTo> TypeTos { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
@@ -44,19 +46,9 @@ public partial class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema("new_TOIR");
 
-        modelBuilder
-            .HasPostgresEnum("new_TOIR", "action_type_enum", new[] { "create", "update", "delete", "status_change", "login", "logout" })
-            .HasPostgresEnum("new_TOIR", "brigade_specialisation_enum", new[] { "mechanic", "electric" })
-            .HasPostgresEnum("new_TOIR", "brigade_type_enum", new[] { "mobile", "static" })
-            .HasPostgresEnum("new_TOIR", "entity_type_enum", new[] { "equipment", "work_order", "material", "user", "brigade", "workshop" })
-            .HasPostgresEnum("new_TOIR", "eq_status_enum", new[] { "active", "in_repair", "reserved" })
-            .HasPostgresEnum("new_TOIR", "user_role_enum", new[] { "admin", "employee", "master" })
-            .HasPostgresEnum("new_TOIR", "user_status_enum", new[] { "active", "blocked" })
-            .HasPostgresEnum("new_TOIR", "wo_priority_enum", new[] { "low", "normal", "high", "critical" })
-            .HasPostgresEnum("new_TOIR", "wo_status_enum", new[] { "new", "in_pcocess", "complete" })
-            .HasPostgresEnum("new_TOIR", "wo_type_enum", new[] { "repair", "maintenance", "inspection", "emergency" });
+        modelBuilder.HasDefaultSchema("new_TOIR");
+        modelBuilder.HasPostgresExtension("pg_catalog", "adminpack");
 
         modelBuilder.Entity<Brigade>(entity =>
         {
@@ -212,6 +204,19 @@ public partial class AppDbContext : DbContext
                 .HasConstraintName("shedule_to_to_id_fkey");
         });
 
+        modelBuilder.Entity<TimesNormativeTo>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("times_normative_to_pkey");
+
+            entity.HasOne(d => d.Eq).WithMany(p => p.TimesNormativeToes)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("times_normative_to_eq_id_fkey");
+
+            entity.HasOne(d => d.TypeTo).WithMany(p => p.TimesNormativeToes)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("times_normative_to_type_to_id_fkey");
+        });
+
         modelBuilder.Entity<TypeTo>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("type_to_pkey");
@@ -252,7 +257,6 @@ public partial class AppDbContext : DbContext
         });
 
         OnModelCreatingPartial(modelBuilder);
-        
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

@@ -11,6 +11,7 @@ public static class ApiEndpoints
     public static void MapAll(WebApplication app)
     {
         MapAuth(app);
+        MapDashBoard(app);
     }
 
 
@@ -147,6 +148,21 @@ public static class ApiEndpoints
                 .CountAsync(o => o.MasterId == uid && statuses.Contains(o.StatusWo));
             var countActiveOrdersLost = await db.WorkOrders
                 .CountAsync(o => o.MasterId == uid && statuses.Contains(o.StatusWo) && o.DateEnd < DateTime.UtcNow);
+
+            var nowPlanOrders = await db.WorkOrders
+                .CountAsync(o => o.DateStart == DateTime.Now && o.MasterId == uid);
+            var nowCreateOrders = await db.WorkOrders
+                .CountAsync(o => o.DateCreate == DateTime.Now && o.MasterId == uid);
+
+            return Api.Ok(new {
+               totalEqCount,
+               brokeEqCount,
+               eqCountString,
+               countActiveOrders,
+               countActiveOrdersLost,
+               nowPlanOrders,
+               nowCreateOrders
+        });
                 
         });
 
