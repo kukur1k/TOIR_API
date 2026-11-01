@@ -177,16 +177,19 @@ public static class ApiEndpoints
                 .OrderByDescending(x => x.DateCreate)
                 .Take(10)
                 .Select(x => new TableOrderResponse(
-                    x.Id,
+                    x.Id.ToString(),
                     x.Eq.Name,
                     x.Priority == "high" ? ("rgb(255, 0, 0)"),
                     x.StatusWo,
                     x.StatusWo == "new" ? ("rgb(17, 255, 0)"),
-                    x.Brigade
+                    x.Brigade.Id + x.Brigade.Title,
+                    x.DateStart.ToString(),
+                    x.Reason,
+                    x.Master.Id + x.Master.LastName
                 ))
                 .ToListAsync();
 
-            return Api.Ok();
+            return Api.Ok(orders);
         });
 
     }
