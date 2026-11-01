@@ -171,21 +171,19 @@ public static class ApiEndpoints
             var uid = jwt.GetUserId(ctx.User);
 
             var orders = await db.WorkOrders
-                .Include(x => x.Eq)
-                .Include(x => x.Brigade)
                 .Where(x => x.MasterId == uid)
                 .OrderByDescending(x => x.DateCreate)
                 .Take(10)
                 .Select(x => new TableOrderResponse(
                     x.Id.ToString(),
                     x.Eq.Name,
-                    x.Priority == "high" ? ("rgb(255, 0, 0)"),
+                    x.Priority == "high" ? ("rgb(255, 0, 0)") : null,
                     x.StatusWo,
-                    x.StatusWo == "new" ? ("rgb(17, 255, 0)"),
-                    x.Brigade.Id + x.Brigade.Title,
+                    x.StatusWo == "new" ? ("rgb(17, 255, 0)") : null,
+                    x.Brigade.Id + " " + x.Brigade.Title,
                     x.DateStart.ToString(),
                     x.Reason,
-                    x.Master.Id + x.Master.LastName
+                    x.Master.Id + " " + x.Master.LastName
                 ))
                 .ToListAsync();
 
