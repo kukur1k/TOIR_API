@@ -48,17 +48,7 @@ public partial class AppDbContext : DbContext
     {
         modelBuilder.HasDefaultSchema("new_TOIR");
 
-        modelBuilder
-            .HasPostgresEnum("new_TOIR", "action_type_enum", new[] { "create", "update", "delete", "status_change", "login", "logout" })
-            .HasPostgresEnum("new_TOIR", "brigade_specialisation_enum", new[] { "mechanic", "electric" })
-            .HasPostgresEnum("new_TOIR", "brigade_type_enum", new[] { "mobile", "static" })
-            .HasPostgresEnum("new_TOIR", "entity_type_enum", new[] { "equipment", "work_order", "material", "user", "brigade", "workshop" })
-            .HasPostgresEnum("new_TOIR", "eq_status_enum", new[] { "active", "in_repair", "reserved" })
-            .HasPostgresEnum("new_TOIR", "user_role_enum", new[] { "admin", "employee", "master" })
-            .HasPostgresEnum("new_TOIR", "user_status_enum", new[] { "active", "blocked" })
-            .HasPostgresEnum("new_TOIR", "wo_priority_enum", new[] { "low", "normal", "high", "critical" })
-            .HasPostgresEnum("new_TOIR", "wo_status_enum", new[] { "new", "in_pcocess", "complete" })
-            .HasPostgresEnum("new_TOIR", "wo_type_enum", new[] { "repair", "maintenance", "inspection", "emergency" });
+        modelBuilder.HasPostgresExtension("pg_catalog", "adminpack");
 
         modelBuilder.Entity<Brigade>(entity =>
         {
@@ -208,6 +198,10 @@ public partial class AppDbContext : DbContext
             entity.HasOne(d => d.Brigade).WithMany(p => p.SheduleTos)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("shedule_to_brigade_id_fkey");
+
+            entity.HasOne(d => d.Eq).WithMany(p => p.SheduleTos)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("shedule_to_eq_id_fkey");
 
             entity.HasOne(d => d.To).WithMany(p => p.SheduleTos)
                 .OnDelete(DeleteBehavior.ClientSetNull)

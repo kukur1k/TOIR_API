@@ -22,9 +22,16 @@ public partial class SheduleTo
     [Column("brigade_id")]
     public int BrigadeId { get; set; }
 
+    [Column("eq_id")]
+    public int EqId { get; set; }
+
     [ForeignKey("BrigadeId")]
     [InverseProperty("SheduleTos")]
     public virtual Brigade Brigade { get; set; } = null!;
+
+    [ForeignKey("EqId")]
+    [InverseProperty("SheduleTos")]
+    public virtual Equipment Eq { get; set; } = null!;
 
     [ForeignKey("ToId")]
     [InverseProperty("SheduleTos")]

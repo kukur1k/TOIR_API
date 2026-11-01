@@ -190,7 +190,66 @@ public static class ApiEndpoints
             return Api.Ok(orders);
         });
 
-    }
+        g.MapGet("/FeautureTO", async (JwtService jwt, HttpContext ctx, AppDbContext db) =>
+        {
+            var uid = jwt.GetUserId(ctx.User);
+
+            var tos = await db.SheduleTos
+                .Select(x => new ScheduleToResponse
+                (
+                    x.EqId,
+                    x.Eq.Name,
+                    x.To.Title,
+                    x.Date.ToString(),
+                    x.Date >= DateOnly.FromDateTime(DateTime.Now) ? "запланировано" : "просрочено",
+                    x.Date >= DateOnly.FromDateTime(DateTime.Now) ? null : "rgb(255, 0, 0)"
+                )).ToListAsync();
+
+            return Api.Ok(tos);
+        });
+
+
+    g.MapGet("/FeautureTO/{eqId:int}", async (int eqId, AppDbContext db, JwtService jwt, HttpContext http) =>
+    {
+        var equipment = await db.Equipment
+            .AsNoTracking()
+            .Where(e => e.Id == eqId)
+            .Select(e => new { e.Id, e.Name })
+            .FirstOrDefaultAsync();
+
+        if (equipment is null)
+            return Api.NotFound("Оборудовавние не найдено");
+
+        var history = await db.SheduleTos
+            .AsNoTracking()
+            .Where(x => x.EqId == eqId)
+            .OrderByDescending(x => x.Date)
+            .Select(x => new HistoryTo(
+                x.Id,
+                x.To.Title,
+                x.Date.ToString()
+            ))
+            .ToListAsync();
+
+        return Api.Ok(new
+        {
+            eqId = equipment.Id,
+            equipmentName = equipment.Name,
+            history
+        });
+    });
+
+}
+    public record ScheduleToResponse(
+        int EqId, string EqTitle, string TypeTo, string PlanDate, string Status, string Color
+    );
+
+    public record HistoryTo(
+        int Id,
+        string ToTitle,
+        string Date
+    );
+
 }
 
 

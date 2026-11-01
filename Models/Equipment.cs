@@ -60,6 +60,9 @@ public partial class Equipment
     public virtual ICollection<EqHistoryStatusUpdate> EqHistoryStatusUpdates { get; set; } = new List<EqHistoryStatusUpdate>();
 
     [InverseProperty("Eq")]
+    public virtual ICollection<SheduleTo> SheduleTos { get; set; } = new List<SheduleTo>();
+
+    [InverseProperty("Eq")]
     public virtual ICollection<TimesNormativeTo> TimesNormativeToes { get; set; } = new List<TimesNormativeTo>();
 
     [InverseProperty("Eq")]

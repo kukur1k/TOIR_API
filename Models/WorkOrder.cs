@@ -41,10 +41,10 @@ public partial class WorkOrder
     public int EqId { get; set; }
 
     [Column("date_start")]
-    public DateTime? DateStart { get; set; }
+    public DateOnly? DateStart { get; set; }
 
     [Column("date_end")]
-    public DateTime? DateEnd { get; set; }
+    public DateOnly? DateEnd { get; set; }
 
     [ForeignKey("BrigadeId")]
     [InverseProperty("WorkOrders")]
