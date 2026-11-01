@@ -19,3 +19,15 @@ public record AuthResponce(
 public record RefreshRequest(
     string RefreshToken
 );
+
+public record TableOrderResponse(
+    string Id,
+    string Eq,
+    string ColorCodePriority,
+    string Status,
+    string StatusColor,
+    string Brigade,
+    string DateStart,
+    string Reason,
+    string Master
+);

@@ -166,6 +166,29 @@ public static class ApiEndpoints
                 
         });
 
+        g.MapGet("/ActiveOrders", async (JwtService jwt, HttpContext ctx, AppDbContext db) =>
+        {
+            var uid = jwt.GetUserId(ctx.User);
+
+            var orders = await db.WorkOrders
+                .Include(x => x.Eq)
+                .Include(x => x.Brigade)
+                .Where(x => x.MasterId == uid)
+                .OrderByDescending(x => x.DateCreate)
+                .Take(10)
+                .Select(x => new TableOrderResponse(
+                    x.Id,
+                    x.Eq.Name,
+                    x.Priority == "high" ? ("rgb(255, 0, 0)"),
+                    x.StatusWo,
+                    x.StatusWo == "new" ? ("rgb(17, 255, 0)"),
+                    x.Brigade
+                ))
+                .ToListAsync();
+
+            return Api.Ok();
+        });
+
     }
 }
 

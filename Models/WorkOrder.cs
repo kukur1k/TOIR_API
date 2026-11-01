@@ -34,20 +34,21 @@ public partial class WorkOrder
     [Column("master_id")]
     public int? MasterId { get; set; }
 
+    [Column("brigade_id")]
+    public int BrigadeId { get; set; }
+
     [Column("eq_id")]
     public int EqId { get; set; }
 
-    [Column("plan_date_start")]
-    public DateOnly? PlanDateStart { get; set; }
-
-    [Column("plan_date_end")]
-    public DateOnly? PlanDateEnd { get; set; }
-
-    [Column("date_start", TypeName = "timestamp without time zone")]
+    [Column("date_start")]
     public DateTime? DateStart { get; set; }
 
-    [Column("date_end", TypeName = "timestamp without time zone")]
+    [Column("date_end")]
     public DateTime? DateEnd { get; set; }
+
+    [ForeignKey("BrigadeId")]
+    [InverseProperty("WorkOrders")]
+    public virtual Brigade Brigade { get; set; } = null!;
 
     [ForeignKey("EqId")]
     [InverseProperty("WorkOrders")]

@@ -31,6 +31,9 @@ public partial class Brigade
     [InverseProperty("Brigade")]
     public virtual ICollection<SheduleTo> SheduleTos { get; set; } = new List<SheduleTo>();
 
+    [InverseProperty("Brigade")]
+    public virtual ICollection<WorkOrder> WorkOrders { get; set; } = new List<WorkOrder>();
+
     [ForeignKey("BrigadeId")]
     [InverseProperty("Brigades")]
     public virtual ICollection<User> Users { get; set; } = new List<User>();
