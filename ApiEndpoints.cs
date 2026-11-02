@@ -12,6 +12,7 @@ public static class ApiEndpoints
     {
         MapAuth(app);
         MapDashBoard(app);
+        MapEquipment(app);
     }
 
 
@@ -147,10 +148,10 @@ public static class ApiEndpoints
             var countActiveOrders = await db.WorkOrders
                 .CountAsync(o => o.MasterId == uid && statuses.Contains(o.StatusWo));
             var countActiveOrdersLost = await db.WorkOrders
-                .CountAsync(o => o.MasterId == uid && statuses.Contains(o.StatusWo) && o.DateEnd < DateTime.UtcNow);
+                .CountAsync(o => o.MasterId == uid && statuses.Contains(o.StatusWo) && o.DateEnd < DateOnly.FromDateTime(DateTime.UtcNow));
 
             var nowPlanOrders = await db.WorkOrders
-                .CountAsync(o => o.DateStart == DateTime.Now && o.MasterId == uid);
+                .CountAsync(o => o.DateStart == DateOnly.FromDateTime(DateTime.Now) && o.MasterId == uid);
             var nowCreateOrders = await db.WorkOrders
                 .CountAsync(o => o.DateCreate == DateTime.Now && o.MasterId == uid);
 
@@ -194,7 +195,7 @@ public static class ApiEndpoints
         {
             var uid = jwt.GetUserId(ctx.User);
 
-            var tos = await db.SheduleTos
+            var tos = await db.SheduleTos.Where(x => x.Eq.Workshop.MasterId == uid)
                 .Select(x => new ScheduleToResponse
                 (
                     x.EqId,
@@ -209,10 +210,12 @@ public static class ApiEndpoints
         });
 
 
-        g.MapGet("/HistoryTO/{eqId:int}", async (int eqId, AppDbContext db, JwtService jwt, HttpContext http) =>
+        g.MapGet("/HistoryTO/{eqId:int}", async (int eqId, AppDbContext db, JwtService jwt, HttpContext ctx) =>
         {
+            var uid = jwt.GetUserId(ctx.User);
+
             var equipment = await db.Equipment
-                .Where(e => e.Id == eqId)
+                .Where(e => e.Id == eqId && e.Workshop.Master!.Id == uid)
                 .Select(e => new { e.Id, e.Name })
                 .FirstOrDefaultAsync();
 
@@ -240,6 +243,11 @@ public static class ApiEndpoints
     static void MapEquipment(WebApplication app)
     {
         var g = app.MapGroup("/equipment").WithTags("Equipment");
+
+        g.MapGet("/", async (int eqId, HttpContext ctx, JwtService jwt, AppDbContext db) =>
+        {
+            
+        });
 
         g.MapGet("/work-orders/{eqId:Int}", async (int eqId, HttpContext ctx, JwtService jwt, AppDbContext db) =>
         {
