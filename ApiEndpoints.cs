@@ -304,11 +304,34 @@ public static class ApiEndpoints
         }).RequireAuthorization();
 
 
-        g.MapPost("/", async (AppDbContext db, HttpContext ctx, JwtService jwt) =>
+        g.MapPost("/", async (EqRequest eq, AppDbContext db, HttpContext ctx, JwtService jwt) =>
         {
             var uid = jwt.GetUserId(ctx.User);
 
-            var eq = await db.Equipment.Where(x => x.Id == id).FirstOrDefaultAsync();
+            var e = new Equipment
+            {
+                InventNumber = eq.InvNumber,
+                Name = eq.Name,
+                Model = eq.Name,
+                SerialNumber = eq.SerialNumber,
+                DateStartExp = eq.DateStartExp,
+                DateStartWork = eq.DateStartWork,
+                Manufacture = eq.Name,
+                WarrancyTime = eq.Name,
+                WorkshopId = eq.Workshop,
+                EqStatus = eq.Status
+            }
+
+    //          public record EqRequest(
+    //     string InvNumber,
+    //     string Name, string Model,
+    //     string SerialNumber, DateOnly ExpStart,
+    //     DateOnly WorkStart, string Manifacture,
+    //     DateOnly WarrancyDate, string Workshop,
+    //     string Status
+    // );
+
+            var error = await db.Equipment.Add() 
 
            
 
