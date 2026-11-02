@@ -302,6 +302,19 @@ public static class ApiEndpoints
 
             return Api.Ok(orders);
         }).RequireAuthorization();
+
+
+        g.MapPost("/", async (AppDbContext db, HttpContext ctx, JwtService jwt) =>
+        {
+            var uid = jwt.GetUserId(ctx.User);
+
+            var eq = await db.Equipment.Where(x => x.Id == id).FirstOrDefaultAsync();
+
+           
+
+            
+        });
+
     }
 }
     
