@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using TOIR_API.Data;
 using TOIR_API.Models;
@@ -165,7 +166,7 @@ public static class ApiEndpoints
                nowCreateOrders
         });
                 
-        });
+        }).RequireAuthorization();
 
         g.MapGet("/ActiveOrdersForMaster", async (JwtService jwt, HttpContext ctx, AppDbContext db) =>
         {
@@ -189,7 +190,7 @@ public static class ApiEndpoints
                 .ToListAsync();
 
             return Api.Ok(orders);
-        });
+        }).RequireAuthorization();
 
         g.MapGet("/FeautureTO", async (JwtService jwt, HttpContext ctx, AppDbContext db) =>
         {
@@ -207,7 +208,7 @@ public static class ApiEndpoints
                 )).ToListAsync();
 
             return Api.Ok(tos);
-        });
+        }).RequireAuthorization();
 
 
         g.MapGet("/HistoryTO/{eqId:int}", async (int eqId, AppDbContext db, JwtService jwt, HttpContext ctx) =>
@@ -238,16 +239,46 @@ public static class ApiEndpoints
                 equipmentName = equipment.Name,
                 history
             });
-        });
+        }).RequireAuthorization();
     }
     static void MapEquipment(WebApplication app)
     {
         var g = app.MapGroup("/equipment").WithTags("Equipment");
 
-        g.MapGet("/", async (int eqId, HttpContext ctx, JwtService jwt, AppDbContext db) =>
+        g.MapGet("/", async (string? eqStatus, string? modelStr,  HttpContext ctx, JwtService jwt, AppDbContext db) =>
         {
-            
-        });
+            var uid = jwt.GetUserId(ctx.User);
+
+            // зелёный - в работе, жёлтый - в ремонте, оранжевый - в простое, серый - выведено
+
+            var equipment = await db.Equipment.Where(x => x.Workshop.MasterId == uid)
+                .Select(x => new
+                {
+                    x.InventNumber,
+                    x.Name,
+                    x.Model,
+                    x.Manufacture,
+                    x.DateStartWork,
+                    x.EqStatus,
+                    StatusColor = x.EqStatus == "в работе" ? "rgb(0, 255, 0)"
+                                : x.EqStatus == "в ремонте" ? "rgb(255, 255, 0)"
+                                : x.EqStatus == "в простое" ? "rgb(255, 100, 0)"
+                                : x.EqStatus == "выведено" ? "rgb(102, 102, 102)"
+                                : null
+                    
+                }).ToListAsync();
+
+            if (!String.IsNullOrWhiteSpace(eqStatus))
+            {
+                equipment = equipment.Where(x => x.EqStatus == eqStatus).ToList();
+            }
+            if (!String.IsNullOrWhiteSpace(modelStr))
+            {
+                equipment = equipment.Where(x => x.Model!.ToLower().Contains(modelStr.ToLower())).ToList();
+            }
+
+            return Api.Ok(equipment);
+        }).RequireAuthorization();
 
         g.MapGet("/work-orders/{eqId:Int}", async (int eqId, HttpContext ctx, JwtService jwt, AppDbContext db) =>
         {
@@ -270,7 +301,7 @@ public static class ApiEndpoints
                 .ToListAsync();
 
             return Api.Ok(orders);
-        });
+        }).RequireAuthorization();
     }
 }
     

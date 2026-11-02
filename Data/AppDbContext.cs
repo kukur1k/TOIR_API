@@ -48,8 +48,6 @@ public partial class AppDbContext : DbContext
     {
         modelBuilder.HasDefaultSchema("new_TOIR");
 
-        modelBuilder.HasPostgresExtension("pg_catalog", "adminpack");
-
         modelBuilder.Entity<Brigade>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("brigade_pkey");
