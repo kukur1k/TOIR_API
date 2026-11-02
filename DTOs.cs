@@ -31,3 +31,14 @@ public record TableOrderResponse(
     string Reason,
     string Master
 );
+
+
+public record ScheduleToResponse(
+        int EqId, string EqTitle, string TypeTo, string PlanDate, string Status, string Color
+    );
+
+    public record HistoryTo(
+        int Id,
+        string ToTitle,
+        string Date
+    );

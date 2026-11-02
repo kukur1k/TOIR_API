@@ -166,7 +166,7 @@ public static class ApiEndpoints
                 
         });
 
-        g.MapGet("/ActiveOrders", async (JwtService jwt, HttpContext ctx, AppDbContext db) =>
+        g.MapGet("/ActiveOrdersForMaster", async (JwtService jwt, HttpContext ctx, AppDbContext db) =>
         {
             var uid = jwt.GetUserId(ctx.User);
 
@@ -209,48 +209,62 @@ public static class ApiEndpoints
         });
 
 
-    g.MapGet("/FeautureTO/{eqId:int}", async (int eqId, AppDbContext db, JwtService jwt, HttpContext http) =>
-    {
-        var equipment = await db.Equipment
-            .AsNoTracking()
-            .Where(e => e.Id == eqId)
-            .Select(e => new { e.Id, e.Name })
-            .FirstOrDefaultAsync();
-
-        if (equipment is null)
-            return Api.NotFound("Оборудовавние не найдено");
-
-        var history = await db.SheduleTos
-            .AsNoTracking()
-            .Where(x => x.EqId == eqId)
-            .OrderByDescending(x => x.Date)
-            .Select(x => new HistoryTo(
-                x.Id,
-                x.To.Title,
-                x.Date.ToString()
-            ))
-            .ToListAsync();
-
-        return Api.Ok(new
+        g.MapGet("/HistoryTO/{eqId:int}", async (int eqId, AppDbContext db, JwtService jwt, HttpContext http) =>
         {
-            eqId = equipment.Id,
-            equipmentName = equipment.Name,
-            history
+            var equipment = await db.Equipment
+                .Where(e => e.Id == eqId)
+                .Select(e => new { e.Id, e.Name })
+                .FirstOrDefaultAsync();
+
+            if (equipment is null)
+                return Api.NotFound("Оборудовавние не найдено");
+
+            var history = await db.SheduleTos
+                .Where(x => x.EqId == eqId)
+                .OrderByDescending(x => x.Date)
+                .Select(x => new HistoryTo(
+                    x.Id,
+                    x.To.Title,
+                    x.Date.ToString()
+                ))
+                .ToListAsync();
+
+            return Api.Ok(new
+            {
+                eqId = equipment.Id,
+                equipmentName = equipment.Name,
+                history
+            });
         });
-    });
+    }
+    static void MapEquipment(WebApplication app)
+    {
+        var g = app.MapGroup("/equipment").WithTags("Equipment");
 
+        g.MapGet("/work-orders/{eqId:Int}", async (int eqId, HttpContext ctx, JwtService jwt, AppDbContext db) =>
+        {
+
+            var orders = await db.WorkOrders
+                .Where(x => x.EqId == eqId)
+                .OrderByDescending(x => x.DateCreate)
+                .Take(10)
+                .Select(x => new TableOrderResponse(
+                    x.Id.ToString(),
+                    x.Eq.Name,
+                    x.Priority == "high" ? ("rgb(255, 0, 0)") : null,
+                    x.StatusWo,
+                    x.StatusWo == "new" ? ("rgb(17, 255, 0)") : null,
+                    x.Brigade.Id + " " + x.Brigade.Title,
+                    x.DateStart.ToString(),
+                    x.Reason,
+                    x.Master.Id + " " + x.Master.LastName
+                ))
+                .ToListAsync();
+
+            return Api.Ok(orders);
+        });
+    }
 }
-    public record ScheduleToResponse(
-        int EqId, string EqTitle, string TypeTo, string PlanDate, string Status, string Color
-    );
-
-    public record HistoryTo(
-        int Id,
-        string ToTitle,
-        string Date
-    );
-
-}
-
+    
 
 
