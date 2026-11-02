@@ -308,34 +308,44 @@ public static class ApiEndpoints
         {
             var uid = jwt.GetUserId(ctx.User);
 
+            var ws = await db.Workshops.Where(x => x.Title == eq.Workshop).FirstOrDefaultAsync();
+            if (ws is null) Api.NotFound("Склад не найден");
+
             var e = new Equipment
             {
                 InventNumber = eq.InvNumber,
                 Name = eq.Name,
                 Model = eq.Name,
                 SerialNumber = eq.SerialNumber,
-                DateStartExp = eq.DateStartExp,
-                DateStartWork = eq.DateStartWork,
+                DateStartExp = eq.ExpStart,
+                DateStartWork = eq.WorkStart,
                 Manufacture = eq.Name,
-                WarrancyTime = eq.Name,
-                WorkshopId = eq.Workshop,
+                WarrancyTime = eq.WarrancyDate,
+                WorkshopId = ws!.Id,
                 EqStatus = eq.Status
-            }
+            };
 
-    //          public record EqRequest(
-    //     string InvNumber,
-    //     string Name, string Model,
-    //     string SerialNumber, DateOnly ExpStart,
-    //     DateOnly WorkStart, string Manifacture,
-    //     DateOnly WarrancyDate, string Workshop,
-    //     string Status
-    // );
-
-            var error = await db.Equipment.Add() 
-
-           
-
+            await db.Equipment.AddAsync(e);
+            await db.SaveChangesAsync(); 
             
+            Api.Created(e, $"equipment/{e.Id}");
+        }).RequireAuthorization();
+
+        g.MapDelete("/{id:Int}", async (int id, HttpContext ctx, JwtService jwt, AppDbContext db) =>
+        {
+            var uid = jwt.GetUserId(ctx.User);
+
+            var eq = await db.Equipment.Where(x => x.Workshop.MasterId == uid && x.Id == id).FirstOrDefaultAsync();
+
+            if (eq is null) Api.NotFound("Оборудование не найдено");  
+
+            var orders = await db.WorkOrders.CountAsync(x => x.EqId == id);
+            if (orders != 0) Api.Conflict("Оборудование нельзя удалить, так как у него есть связанные заявки");
+
+            db.Remove(eq);
+            await db.SaveChangesAsync();
+
+            Api.Ok<object?>(null, "Удалено");
         });
 
     }
