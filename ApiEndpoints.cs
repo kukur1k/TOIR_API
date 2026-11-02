@@ -141,11 +141,17 @@ public static class ApiEndpoints
             var totalEqCount = await db.Equipment
                 .CountAsync(e => e.Workshop.MasterId == uid);
             var brokeEqCount = await db.Equipment
-                .CountAsync(e => e.Workshop.ChiefId == uid && e.EqStatus == "in_repair");
+                .CountAsync(e => e.Workshop.ChiefId == uid && e.EqStatus == "в ремонте");
             var eqCountString = totalEqCount + " / " + brokeEqCount;
 
             //заявки
-            var statuses = new[] { "new", "in_pcocess", "complete" };
+            var statuses = new[] { "создана",
+			"назначена",
+			"в работе",
+			"ожидает материалов",
+			"выполнена",
+			"закрыта",
+			"отменена" };
             var countActiveOrders = await db.WorkOrders
                 .CountAsync(o => o.MasterId == uid && statuses.Contains(o.StatusWo));
             var countActiveOrdersLost = await db.WorkOrders
@@ -179,9 +185,9 @@ public static class ApiEndpoints
                 .Select(x => new TableOrderResponse(
                     x.Id.ToString(),
                     x.Eq.Name,
-                    x.Priority == "high" ? ("rgb(255, 0, 0)") : null,
+                    x.Priority == "высокий" ? ("rgb(255, 0, 0)") : null,
                     x.StatusWo,
-                    x.StatusWo == "new" ? ("rgb(17, 255, 0)") : null,
+                    x.StatusWo == "создана" ? ("rgb(17, 255, 0)") : null,
                     x.Brigade.Id + " " + x.Brigade.Title,
                     x.DateStart.ToString(),
                     x.Reason,
@@ -310,6 +316,9 @@ public static class ApiEndpoints
 
             var ws = await db.Workshops.Where(x => x.Title == eq.Workshop).FirstOrDefaultAsync();
             if (ws is null) Api.NotFound("Склад не найден");
+
+            var s = new[] {"в работе","в ремонте", "в простое","выведено"};
+            if (!s.Contains(eq.Status)) Api.NotFound("Статус не валиден");
 
             var e = new Equipment
             {
