@@ -346,10 +346,10 @@ public static class ApiEndpoints
 
             var eq = await db.Equipment.Where(x => x.Workshop.MasterId == uid && x.Id == id).FirstOrDefaultAsync();
 
-            if (eq is null) Api.NotFound("Оборудование не найдено");  
+            if (eq is null) return Api.NotFound("Оборудование не найдено");  
 
             var orders = await db.WorkOrders.CountAsync(x => x.EqId == id);
-            if (orders != 0) Api.Conflict("Оборудование нельзя удалить, так как у него есть связанные заявки");
+            if (orders != 0) return Api.Conflict("Оборудование нельзя удалить, так как у него есть связанные заявки");
 
             db.Remove(eq);
             await db.SaveChangesAsync();
