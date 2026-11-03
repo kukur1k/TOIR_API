@@ -377,10 +377,9 @@ public static class ApiEndpoints
             if (req.Workshop != null)
             {
                 var wid =  await db.Workshops.Where(x => x.Title == req.Workshop)
-                                                                .Select(x => x.Id)
                                                                 .FirstOrDefaultAsync();
                 if (wid == null) return Api.NotFound("Склад не найден");
-                eq.WorkshopId = wid;
+                eq.WorkshopId = wid.Id;
             }
 
             await db.SaveChangesAsync();
