@@ -14,6 +14,7 @@ public static class ApiEndpoints
         MapAuth(app);
         MapDashBoard(app);
         MapEquipment(app);
+        MapTypesTO(app);
     }
 
 
@@ -386,6 +387,29 @@ public static class ApiEndpoints
             return Api.Ok(eq);
         }).RequireAuthorization();
 
+    }
+
+    static void MapTypesTO(WebApplication app)
+    {
+        var g = app.MapGroup("/types-to").WithTags("TypesTO").RequireAuthorization();
+
+        g.MapGet("/", async (AppDbContext db) =>
+        {
+            var types = await db.TypeTos.Select(x => new
+            {
+                x.Id,
+                x.Title,
+                x.Description,
+                x.Interval
+            }).ToListAsync();
+
+            return Api.Ok(types);
+        });
+
+        // g.MapDelete("/{id:Int}", async (int id, AppDbContext db) =>
+        // {
+        //     var type = 
+        // });
     }
 }
     
