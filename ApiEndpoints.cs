@@ -368,10 +368,20 @@ public static class ApiEndpoints
             if (req.Name != null) eq.Name = req.Name;
             if (req.Manifacture != null) eq.Manufacture = req.Manifacture;
             if (req.SerialNumber != null) eq.SerialNumber = req.SerialNumber;
-            if (req.Status != null) eq.EqStatus = req.Status;
-            if (req.Workshop != null) eq.WorkshopId = await db.Workshops.Where(x => x.Title == req.Workshop)
+            if (req.Status != null)
+            {
+                var s = new[] {"в работе","в ремонте", "в простое","выведено"};
+                if (!s.Contains(req.Status)) return Api.NotFound("Статус не валиден");
+                eq.EqStatus = req.Status;
+            } 
+            if (req.Workshop != null)
+            {
+                var wid =  await db.Workshops.Where(x => x.Title == req.Workshop)
                                                                 .Select(x => x.Id)
                                                                 .FirstOrDefaultAsync();
+                if (wid == null) return Api.NotFound("Склад не найден");
+                eq.WorkshopId = wid;
+            }
 
             await db.SaveChangesAsync();
             return Api.Ok(eq);
