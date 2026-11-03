@@ -174,7 +174,7 @@ public static class ApiEndpoints
                 
         }).RequireAuthorization();
 
-        g.MapGet("/ActiveOrdersForMaster", async (JwtService jwt, HttpContext ctx, AppDbContext db) =>
+        g.MapGet("/active-orders-master", async (JwtService jwt, HttpContext ctx, AppDbContext db) =>
         {
             var uid = jwt.GetUserId(ctx.User);
 
@@ -198,7 +198,7 @@ public static class ApiEndpoints
             return Api.Ok(orders);
         }).RequireAuthorization();
 
-        g.MapGet("/FeautureTO", async (JwtService jwt, HttpContext ctx, AppDbContext db) =>
+        g.MapGet("/upcoming-to", async (JwtService jwt, HttpContext ctx, AppDbContext db) =>
         {
             var uid = jwt.GetUserId(ctx.User);
 
@@ -217,7 +217,7 @@ public static class ApiEndpoints
         }).RequireAuthorization();
 
 
-        g.MapGet("/HistoryTO/{eqId:int}", async (int eqId, AppDbContext db, JwtService jwt, HttpContext ctx) =>
+        g.MapGet("/history-to/{eqId:int}", async (int eqId, AppDbContext db, JwtService jwt, HttpContext ctx) =>
         {
             var uid = jwt.GetUserId(ctx.User);
 
