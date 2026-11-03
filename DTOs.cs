@@ -44,10 +44,10 @@ public record ScheduleToResponse(
     );
 
     public record EqRequest(
-        string InvNumber,
-        string Name, string Model,
-        string SerialNumber, DateOnly ExpStart,
-        DateOnly WorkStart, string Manifacture,
-        DateOnly WarrancyDate, string Workshop,
-        string Status
+        string? InvNumber,
+        string? Name, string? Model,
+        string? SerialNumber, DateOnly? ExpStart,
+        DateOnly? WorkStart, string? Manifacture,
+        DateOnly? WarrancyDate, string? Workshop,
+        string? Status
     );

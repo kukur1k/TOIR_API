@@ -315,10 +315,10 @@ public static class ApiEndpoints
             var uid = jwt.GetUserId(ctx.User);
 
             var ws = await db.Workshops.Where(x => x.Title == eq.Workshop).FirstOrDefaultAsync();
-            if (ws is null) Api.NotFound("Склад не найден");
+            if (ws is null) return Api.NotFound("Склад не найден");
 
             var s = new[] {"в работе","в ремонте", "в простое","выведено"};
-            if (!s.Contains(eq.Status)) Api.NotFound("Статус не валиден");
+            if (!s.Contains(eq.Status)) return Api.NotFound("Статус не валиден");
 
             var e = new Equipment
             {
@@ -337,7 +337,7 @@ public static class ApiEndpoints
             await db.Equipment.AddAsync(e);
             await db.SaveChangesAsync(); 
             
-            Api.Created(e, $"equipment/{e.Id}");
+            return Api.Created(e, $"equipment/{e.Id}");
         }).RequireAuthorization();
 
         g.MapDelete("/{id:Int}", async (int id, HttpContext ctx, JwtService jwt, AppDbContext db) =>
@@ -354,8 +354,28 @@ public static class ApiEndpoints
             db.Remove(eq);
             await db.SaveChangesAsync();
 
-            Api.Ok<object?>(null, "Удалено");
-        });
+            return Api.Ok<object?>(null, "Удалено");
+        }).RequireAuthorization();
+
+        g.MapPut("/{id:Int}", async (int id, EqRequest req, JwtService jwt, AppDbContext db, HttpContext ctx) =>
+        {
+            var eq = await db.Equipment.Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (eq == null) Api.NotFound("Оборудование не найдено");
+
+            if (req.ExpStart != null) eq.DateStartExp = req.ExpStart;
+            if (req.WorkStart != null) eq.DateStartWork = req.ExpStart;
+            if (req.Model != null) eq.Model = req.Model;
+            if (req.Name != null) eq.Name = req.Name;
+            if (req.Manifacture != null) eq.Manufacture = req.Manifacture;
+            if (req.SerialNumber != null) eq.SerialNumber = req.SerialNumber;
+            if (req.Status != null) eq.EqStatus = req.Status;
+            if (req.Workshop != null) eq.WorkshopId = await db.Workshops.Where(x => x.Title == req.Workshop)
+                                                                .Select(x => x.Id)
+                                                                .FirstOrDefaultAsync();
+
+            await db.SaveChangesAsync();
+            return Api.Ok(eq);
+        }).RequireAuthorization();
 
     }
 }
