@@ -408,7 +408,43 @@ public static class ApiEndpoints
 
         g.MapDelete("/{id:Int}", async (int id, AppDbContext db) =>
         {
-            
+            var active = await db.SheduleTos.CountAsync(x => x.To.Id == id);
+            if (active != 0) return Api.Conflict("Не возможно удалить вид ТО. Есть активные записи");
+
+            var to = await db.TypeTos.Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (to == null) return Api.NotFound("Вид ТО не найден");
+
+            db.TypeTos.Remove(to);
+            await db.SaveChangesAsync();
+            return Api.Ok("Вид ТО успешно удален");
+        });
+
+
+        g.MapPost("/", async (TypeToRequest req, AppDbContext db) =>
+        {
+            if (string.IsNullOrWhiteSpace(req.Title))
+                return Api.BadRequest("Название вида ТО обязательно");
+
+            var exists = await db.TypeTos.AnyAsync(x => x.Title == req.Title);
+            if (exists) return Api.Conflict("Вид ТО с таким названием уже существует");
+
+            var type = new TypeTo
+            {
+                Title = req.Title,
+                Description = req.Description,
+                Interval = req.Interval
+            };
+
+            db.TypeTos.Add(type);
+            await db.SaveChangesAsync();
+
+            return Api.Ok(new
+            {
+                type.Id,
+                type.Title,
+                type.Description,
+                type.Interval
+            });
         });
     }
 }

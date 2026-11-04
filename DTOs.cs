@@ -51,3 +51,5 @@ public record ScheduleToResponse(
         DateOnly? WarrancyDate, string? Workshop,
         string? Status
     );
+
+    public record TypeToRequest(string? Title, string? Description, string? Interval);
