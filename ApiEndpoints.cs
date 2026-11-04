@@ -406,10 +406,10 @@ public static class ApiEndpoints
             return Api.Ok(types);
         });
 
-        // g.MapDelete("/{id:Int}", async (int id, AppDbContext db) =>
-        // {
-        //     var type = 
-        // });
+        g.MapDelete("/{id:Int}", async (int id, AppDbContext db) =>
+        {
+            
+        });
     }
 }
     
