@@ -446,6 +446,32 @@ public static class ApiEndpoints
                 type.Interval
             });
         });
+
+        g.MapPut("/{id:Int}", async (int id, TypeToRequest req, AppDbContext db) =>
+        {
+            var type = await db.TypeTos.Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (type == null) return Api.NotFound("Данный вид ТО не найден");
+
+            if (req.Title != null)
+            {
+                var exists = await db.TypeTos.AnyAsync(x => x.Title == req.Title);
+                if (exists) return Api.Conflict("Вид ТО с таким названием уже существует");
+                type.Title = req.Title;
+            }
+
+            if (req.Description != null)
+            {
+                type.Description = req.Description;
+            }
+              if (req.Interval != null)
+            {
+                type.Interval = req.Interval;
+            }
+
+            await db.SaveChangesAsync();
+
+            return Api.Ok(type);
+        });
     }
 }
     
