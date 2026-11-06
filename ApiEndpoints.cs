@@ -558,6 +558,37 @@ public static class ApiEndpoints
             await db.SaveChangesAsync();
             return Api.Ok(newOrder, "Запись графика успешно создана");
         }).RequireAuthorization();
+
+        
+
+        g.MapPost("/work-order", async (int sheduleToId, WorkOrderRequest req, JwtService jwt, AppDbContext db, HttpContext ctx) =>
+        {
+            var uid = jwt.GetUserId(ctx.User);
+
+            var shed = await db.SheduleTos.Where( x => x.Id == sheduleToId).FirstOrDefaultAsync();
+
+            var brigadeId = await db.SheduleTos.Where(x => x.Id == sheduleToId).Select(x => x.BrigadeId).FirstOrDefaultAsync();
+            var eqId = await db.SheduleTos.Where(x => x.Id == sheduleToId).Select(x => x.EqId).FirstOrDefaultAsync();
+
+            if (req.dateStart < DateOnly.FromDateTime(DateTime.Now)) return Api.Conflict("Дата начала не может быть раньше чем сегодня");
+            if (req.dateStart > req.dateEnd) return Api.Conflict("Дата начала не может быть позже чем дата окончания");
+
+            var newOrder = new WorkOrder()
+            {
+                TypeWo = req.TypeWo,
+                Priority = req.Priority,
+                StatusWo = req.StatusWo,
+                DateCreate = DateTime.Now,
+                Reason = req.Reason,
+                MasterId = uid,
+                BrigadeId = brigadeId,
+                EqId = eqId,
+                DateStart = req.dateStart,
+                DateEnd = req.dateEnd
+            };
+
+            return Api.Created(newOrder, $"/calendar-to/work-order/{newOrder.Id}");
+        });
     }
 }
     
