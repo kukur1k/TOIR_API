@@ -494,12 +494,11 @@ public static class ApiEndpoints
 															"отменено",
 															"просрочено"};
 
-            var hasTypeTo =  await db.TypeTos.AnyAsync(x => x.Title == req.typeTo);
-            if (!hasTypeTo) return Api.Conflict("Код типа ТО не валиден");
-
-            var typeToId = await db.TypeTos.Where(x => x.Title == req.typeTo).Select( x => x.Id).FirstOrDefaultAsync();
-
-      
+            if (req.typeTo != null)
+            {
+                var hasTypeTo =  await db.TypeTos.AnyAsync(x => x.Title == req.typeTo);
+                if (!hasTypeTo) return Api.Conflict("Код типа ТО не валиден");
+            }
 
             if (req.status != null)
             {
@@ -512,11 +511,11 @@ public static class ApiEndpoints
             }
             if (req.dateStart != null)
             {
-                orders = orders.Where(x => x.Date >= req.dateStart).ToList();
+                orders = orders.Where(x => x.Date >= req.dateStart.Value).ToList();
             }
-            if (req.dateStart != null)
+            if (req.dateEnd != null)
             {
-                orders = orders.Where(x => x.Date <= req.dateEnd).ToList();
+                orders = orders.Where(x => x.Date <= req.dateEnd.Value).ToList();
             }
 
             return Api.Ok(orders);
