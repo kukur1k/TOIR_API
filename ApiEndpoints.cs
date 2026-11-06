@@ -633,6 +633,37 @@ public static class ApiEndpoints
             return Api.Ok(order, $"Бригада {order.BrigadeId} назначена на заявку {order.Id}");
         });
 
+        g.MapPut("/{id:Int}/complete", async (int id, JwtService jwt, HttpContext ctx, AppDbContext db) =>
+        {
+            var uid = jwt.GetUserId(ctx.User);
+
+            var role = await db.Users.Where(x => x.Id == uid).Select(x => x.Role).FirstOrDefaultAsync();
+            if (role != "master") return Api.Conflict("Вы не являетесь мастером");
+
+            var order = await db.WorkOrders.Where(x => x.Id == id).FirstOrDefaultAsync();
+
+            var material = await db.MaterialsWorkOrders
+            .Where(x => x.WorkOrderId == id)
+            .Select(x => new {x.Material, x.Quantity}).ToListAsync();
+
+            foreach(var item in material)
+            {
+                item.Material.QuantityInStock -= item.Quantity;
+                var hist = new MaterialHistory(){
+                        MaterialId = item.Material.Id,
+                        Date = DateTime.Now,
+                        Cost = item.Material.Cost
+                };
+
+                await db.MaterialHistories.AddAsync(hist);
+            }
+
+            order.StatusWo = "выполнена";
+            await db.SaveChangesAsync();
+
+            return Api.Ok(order, $"Задача {order.Id} успешно завершена мастером {uid}");
+        });
+
         g.MapPut("/{id:Int}/close", async (int id, JwtService jwt, HttpContext ctx, AppDbContext db) =>
         {
             //Нужно пересчитывать время простоя оборудования
