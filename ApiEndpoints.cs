@@ -17,6 +17,7 @@ public static class ApiEndpoints
         MapEquipment(app);
         MapTypesTO(app);
         MapSchedule(app);
+        MapWO(app);
     }
 
 
@@ -561,7 +562,7 @@ public static class ApiEndpoints
 
         
 
-        g.MapPost("/work-order", async (int sheduleToId, WorkOrderRequest req, JwtService jwt, AppDbContext db, HttpContext ctx) =>
+        g.MapPost("/{sheduleToId:Int}/work-order", async (int sheduleToId, WorkOrderRequest req, JwtService jwt, AppDbContext db, HttpContext ctx) =>
         {
             var uid = jwt.GetUserId(ctx.User);
 
@@ -604,6 +605,30 @@ public static class ApiEndpoints
             };
 
             return Api.Created(newOrder, $"/calendar-to/work-order/{newOrder.Id}");
+        });
+    }
+
+    static void MapWO(WebApplication app)
+    {
+        var g = app.MapGroup("/work-orders").WithTags("Work Orders").RequireAuthorization();
+
+        g.MapPost("/{id:Int}/enter-brigade", async (int id, int brigadeId, JwtService jwt, HttpContext ctx, AppDbContext db) =>
+        {
+            var order = await db.WorkOrders.Where(x => x.Id == id).FirstOrDefaultAsync();
+
+            if (order is null) return Api.NotFound("Заявка не найдена");
+
+            if (order!.Brigade != null) return Api.Conflict("На эту заявку бригада уже назначена");
+
+            var brigWork = await db.BrigadeShedules.AnyAsync(x => (x.StartDate > order.DateStart && x.EndDate < order.DateEnd) || (x.StartDate < order.DateStart && x.EndDate > order.DateEnd));
+
+            if (brigWork) return Api.Conflict("У бригады есть пересекающиеся заявки");
+
+            order.BrigadeId = brigadeId;
+
+            order.StatusWo = "назначена";
+
+            return Api.Ok(order, $"Бригада {order.BrigadeId} назначена на заявку {order.Id}");
         });
     }
 }
