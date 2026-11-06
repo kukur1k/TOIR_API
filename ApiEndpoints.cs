@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using TOIR_API.Data;
 using TOIR_API.Models;
@@ -471,6 +472,53 @@ public static class ApiEndpoints
             await db.SaveChangesAsync();
 
             return Api.Ok(type);
+        });
+    }
+
+    public record sheduleFiltersRequest(string? status, string? typeTo, DateOnly? dateStart, DateOnly? dateEnd);
+
+    static void MapSchedule(WebApplication app)
+    {
+        var g = app.MapGroup("/Shedule-to").WithTags("Shedule TO").RequireAuthorization();
+
+        g.MapGet("/calendar-to", async ([AsParameters] sheduleFiltersRequest req, JwtService jwt, AppDbContext db, HttpContext ctx) =>
+        {
+            var uid = jwt.GetUserId(ctx.User);
+
+            var orders = await db.SheduleTos.Where(x => x.Eq.Workshop.MasterId == uid).ToListAsync();
+
+            var stat = new[] {"запланировано", "назначено",
+															"выполняется",
+															"выполнено",
+															"отменено",
+															"просрочено"};
+
+            var hasTypeTo =  await db.TypeTos.AnyAsync(x => x.Title == req.typeTo);
+            if (!hasTypeTo) return Api.Conflict("Код типа ТО не валиден");
+
+            var typeToId = await db.TypeTos.Where(x => x.Title == req.typeTo).Select( x => x.Id).FirstOrDefaultAsync();
+
+      
+
+            if (req.status != null)
+            {
+                if (!stat.Contains(req.status)) return Api.Conflict("Статус не валиден");
+                orders = orders.Where(x => x.StatusTo == req.status).ToList();
+            }
+            if (req.typeTo != null)
+            {
+                orders = orders.Where(x => x.To.Title == req.typeTo).ToList();
+            }
+            if (req.dateStart != null)
+            {
+                orders = orders.Where(x => x.Date >= req.dateStart).ToList();
+            }
+            if (req.dateStart != null)
+            {
+                orders = orders.Where(x => x.Date <= req.dateEnd).ToList();
+            }
+
+            return Api.Ok(orders);
         });
     }
 }

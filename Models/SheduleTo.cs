@@ -25,6 +25,10 @@ public partial class SheduleTo
     [Column("eq_id")]
     public int EqId { get; set; }
 
+    [Column("status_to")]
+    [StringLength(255)]
+    public string StatusTo { get; set; } = null!;
+
     [ForeignKey("BrigadeId")]
     [InverseProperty("SheduleTos")]
     public virtual Brigade Brigade { get; set; } = null!;

@@ -118,7 +118,7 @@ public partial class AppDbContext : DbContext
             entity.HasKey(e => e.Id).HasName("equipment_pkey");
 
             entity.Property(e => e.DateCreateRecord).HasDefaultValueSql("CURRENT_DATE");
-            entity.Property(e => e.EqStatus).HasDefaultValueSql("'active'::character varying");
+            entity.Property(e => e.EqStatus).HasDefaultValueSql("'в работе'::character varying");
 
             entity.HasOne(d => d.Workshop).WithMany(p => p.Equipment)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -193,6 +193,8 @@ public partial class AppDbContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("shedule_to_pkey");
 
+            entity.Property(e => e.StatusTo).HasDefaultValueSql("'запланировано'::character varying");
+
             entity.HasOne(d => d.Brigade).WithMany(p => p.SheduleTos)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("shedule_to_brigade_id_fkey");
@@ -238,8 +240,9 @@ public partial class AppDbContext : DbContext
             entity.HasKey(e => e.Id).HasName("work_order_pkey");
 
             entity.Property(e => e.DateCreate).HasDefaultValueSql("now()");
-            entity.Property(e => e.Priority).HasDefaultValueSql("'normal'::character varying");
-            entity.Property(e => e.StatusWo).HasDefaultValueSql("'new'::character varying");
+            entity.Property(e => e.Priority).HasDefaultValueSql("'средний'::character varying");
+            entity.Property(e => e.Reason).HasDefaultValueSql("'плановая'::text");
+            entity.Property(e => e.StatusWo).HasDefaultValueSql("'создана'::character varying");
             entity.Property(e => e.TypeWo).HasDefaultValueSql("'repair'::character varying");
 
             entity.HasOne(d => d.Brigade).WithMany(p => p.WorkOrders)
