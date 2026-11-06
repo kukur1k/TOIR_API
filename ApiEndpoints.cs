@@ -570,6 +570,20 @@ public static class ApiEndpoints
             var brigadeId = await db.SheduleTos.Where(x => x.Id == sheduleToId).Select(x => x.BrigadeId).FirstOrDefaultAsync();
             var eqId = await db.SheduleTos.Where(x => x.Id == sheduleToId).Select(x => x.EqId).FirstOrDefaultAsync();
 
+            var prior = new[] {"низкий", "средний", "высокий", "критический"};
+            var stat = new[] {"создана",
+			"назначена",
+			"в работе",
+			"ожидает материалов",
+			"выполнена",
+			"закрыта",
+			"отменена"};
+            var reason = new[] {"плановая", "аварийная", "текущая"};
+
+            if (!prior.Contains(req.Priority)) return Api.Conflict("Некорректное значение приоритета");
+            if (!prior.Contains(req.StatusWo)) return Api.Conflict("Некорректное значение статуса");
+            if (!prior.Contains(req.Reason)) return Api.Conflict("Некорректное значение причины");
+
             if (req.dateStart < DateOnly.FromDateTime(DateTime.Now)) return Api.Conflict("Дата начала не может быть раньше чем сегодня");
             if (req.dateStart > req.dateEnd) return Api.Conflict("Дата начала не может быть позже чем дата окончания");
 
