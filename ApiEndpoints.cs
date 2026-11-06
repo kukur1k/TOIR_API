@@ -16,6 +16,7 @@ public static class ApiEndpoints
         MapDashBoard(app);
         MapEquipment(app);
         MapTypesTO(app);
+        MapSchedule(app);
     }
 
 
@@ -519,7 +520,7 @@ public static class ApiEndpoints
             }
 
             return Api.Ok(orders);
-        });
+        }).RequireAuthorization();
 
         g.MapPost("/", async (SheduleToRequest req, JwtService jwt, HttpContext ctx, AppDbContext db) =>
         {
@@ -540,7 +541,7 @@ public static class ApiEndpoints
             await db.SheduleTos.AddAsync(newOrder);
             await db.SaveChangesAsync();
             return Api.Ok(newOrder, "Запись графика успешно создана");
-        });
+        }).RequireAuthorization();
     }
 }
     
