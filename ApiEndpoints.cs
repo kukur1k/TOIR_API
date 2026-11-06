@@ -635,6 +635,8 @@ public static class ApiEndpoints
 
         g.MapPut("/{id:Int}/close", async (int id, JwtService jwt, HttpContext ctx, AppDbContext db) =>
         {
+            //Нужно пересчитывать время простоя оборудования
+
             var uid = jwt.GetUserId(ctx.User);
 
             var role = await db.Users.Where(x => x.Id == uid).Select(x => x.Role).FirstOrDefaultAsync();
