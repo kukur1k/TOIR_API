@@ -628,7 +628,26 @@ public static class ApiEndpoints
 
             order.StatusWo = "назначена";
 
+            await db.SaveChangesAsync();
+
             return Api.Ok(order, $"Бригада {order.BrigadeId} назначена на заявку {order.Id}");
+        });
+
+        g.MapPut("/{id:Int}/close", async (int id, JwtService jwt, HttpContext ctx, AppDbContext db) =>
+        {
+            var uid = jwt.GetUserId(ctx.User);
+
+            var role = await db.Users.Where(x => x.Id == uid).Select(x => x.Role).FirstOrDefaultAsync();
+            if (role != "master") return Api.Conflict("Вы не являетесь мастером");
+
+            var order = await db.WorkOrders.Where(x => x.Id == id).FirstOrDefaultAsync();
+
+            if (order.StatusWo != "выполнена") return Api.Conflict("Задача еще не выполнена");
+
+            order.StatusWo = "закрыта";
+            await db.SaveChangesAsync();
+
+            return Api.Ok(order, $"Задача {order.Id} успешно закрыта мастерос {uid}");
         });
     }
 }
