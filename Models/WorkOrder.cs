@@ -13,10 +13,6 @@ public partial class WorkOrder
     [Column("id")]
     public int Id { get; set; }
 
-    [Column("type_wo")]
-    [StringLength(255)]
-    public string TypeWo { get; set; } = null!;
-
     [Column("priority")]
     [StringLength(255)]
     public string Priority { get; set; } = null!;
@@ -27,6 +23,12 @@ public partial class WorkOrder
 
     [Column("date_create", TypeName = "timestamp without time zone")]
     public DateTime DateCreate { get; set; }
+
+    [Column("type_wo")]
+    public string? TypeWo { get; set; }
+
+    [Column("description")]
+    public string? Description { get; set; }
 
     [Column("reason")]
     public string? Reason { get; set; }

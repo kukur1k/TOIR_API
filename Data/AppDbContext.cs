@@ -47,7 +47,6 @@ public partial class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("new_TOIR");
-
         modelBuilder.Entity<Brigade>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("brigade_pkey");
@@ -241,9 +240,8 @@ public partial class AppDbContext : DbContext
 
             entity.Property(e => e.DateCreate).HasDefaultValueSql("now()");
             entity.Property(e => e.Priority).HasDefaultValueSql("'средний'::character varying");
-            entity.Property(e => e.Reason).HasDefaultValueSql("'плановая'::text");
             entity.Property(e => e.StatusWo).HasDefaultValueSql("'создана'::character varying");
-            entity.Property(e => e.TypeWo).HasDefaultValueSql("'repair'::character varying");
+            entity.Property(e => e.TypeWo).HasDefaultValueSql("'плановая'::text");
 
             entity.HasOne(d => d.Brigade).WithMany(p => p.WorkOrders)
                 .OnDelete(DeleteBehavior.ClientSetNull)
