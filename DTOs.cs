@@ -53,3 +53,7 @@ public record ScheduleToResponse(
     );
 
     public record TypeToRequest(string? Title, string? Description, string? Interval);
+
+    public record sheduleFiltersRequest(string? status, string? typeTo, DateOnly? dateStart, DateOnly? dateEnd);
+
+    public record SheduleToRequest(DateOnly Date, int ToId, int BrigadeId, int EqId);

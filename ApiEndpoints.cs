@@ -475,7 +475,7 @@ public static class ApiEndpoints
         });
     }
 
-    public record sheduleFiltersRequest(string? status, string? typeTo, DateOnly? dateStart, DateOnly? dateEnd);
+
 
     static void MapSchedule(WebApplication app)
     {
@@ -519,6 +519,27 @@ public static class ApiEndpoints
             }
 
             return Api.Ok(orders);
+        });
+
+        g.MapPost("/", async (SheduleToRequest req, JwtService jwt, HttpContext ctx, AppDbContext db) =>
+        {
+            var hasEq = await db.TypeTos.AnyAsync(x => x.Id == req.ToId);
+            var hasBrig = await db.Brigades.AnyAsync(x => x.Id == req.BrigadeId);
+
+            if (!hasEq) return Api.Conflict("Оборудование не найдено");
+            if (!hasBrig) return Api.Conflict("Бригада не найдена");
+
+            var newOrder = new SheduleTo()
+            {
+                Date = req.Date,
+                ToId = req.ToId,
+                BrigadeId = req.BrigadeId,
+                EqId = req.EqId
+            };
+
+            await db.SheduleTos.AddAsync(newOrder);
+            await db.SaveChangesAsync();
+            return Api.Ok(newOrder, "Запись графика успешно создана");
         });
     }
 }
