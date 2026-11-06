@@ -486,7 +486,11 @@ public static class ApiEndpoints
         {
             var uid = jwt.GetUserId(ctx.User);
 
-            var orders = await db.SheduleTos.Where(x => x.Eq.Workshop.MasterId == uid).ToListAsync();
+            var orders = await db.SheduleTos
+                .Include(x => x.To).
+                Include(x => x.Brigade).Include(x => x.Eq)
+                .Where(x => x.Eq.Workshop.MasterId == uid)
+                .ToListAsync();
 
             var stat = new[] {"запланировано", "назначено",
 															"выполняется",
@@ -518,7 +522,20 @@ public static class ApiEndpoints
                 orders = orders.Where(x => x.Date <= req.dateEnd.Value).ToList();
             }
 
-            return Api.Ok(orders);
+            var res = orders.Select(x => new
+            {
+                x.Id,
+                x.Date,
+                x.ToId,
+                x.BrigadeId,
+                x.EqId,
+                x.StatusTo,
+                ToTitle = x.To.Title,
+                BrigadeName = x.Brigade.Title,
+                EqName = x.Eq.Name
+            });
+
+            return Api.Ok(res);
         }).RequireAuthorization();
 
         g.MapPost("/", async (SheduleToRequest req, JwtService jwt, HttpContext ctx, AppDbContext db) =>
