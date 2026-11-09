@@ -58,4 +58,4 @@ public record ScheduleToResponse(
 
     public record SheduleToRequest(DateOnly Date, int ToId, int BrigadeId, int EqId);
 
-    public record WorkOrderRequest(string TypeWo, string Priority, string StatusWo, string Description, string? Reason, DateOnly dateStart, DateOnly dateEnd);
+    public record WorkOrderRequest(string TypeWo, string Priority, string StatusWo, string Description, string? Reason, DateTime dateStart, DateTime dateEnd);

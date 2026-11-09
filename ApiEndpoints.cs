@@ -585,7 +585,7 @@ public static class ApiEndpoints
             if (!stat.Contains(req.StatusWo)) return Api.Conflict("Некорректное значение статуса");
             if (!type.Contains(req.TypeWo)) return Api.Conflict("Некорректное значение типа");
 
-            if (req.dateStart < DateOnly.FromDateTime(DateTime.Now)) return Api.Conflict("Дата начала не может быть раньше чем сегодня");
+            if (req.dateStart < DateTime.Now) return Api.Conflict("Дата начала не может быть раньше чем сегодня");
             if (req.dateStart > req.dateEnd) return Api.Conflict("Дата начала не может быть позже чем дата окончания");
 
             if (req.TypeWo != "аварийная" && req.Reason != null) return Api.Conflict("Причина указывается толко для аварийных заявок");
@@ -620,7 +620,9 @@ public static class ApiEndpoints
 
             if (order!.Brigade != null) return Api.Conflict("На эту заявку бригада уже назначена");
 
-            var brigWork = await db.BrigadeShedules.AnyAsync(x => (x.StartDate > order.DateStart && x.EndDate < order.DateEnd) || (x.StartDate < order.DateStart && x.EndDate > order.DateEnd));
+            var brigWork = await db.BrigadeShedules.AnyAsync(x => (x.StartDate > DateOnly.FromDateTime(order.DateStart!.Value) 
+            && x.EndDate < DateOnly.FromDateTime(order.DateEnd!.Value)) || (x.StartDate < DateOnly.FromDateTime(order.DateStart!.Value)
+            && x.EndDate > DateOnly.FromDateTime(order.DateEnd!.Value)));
 
             if (brigWork) return Api.Conflict("У бригады есть пересекающиеся заявки");
 
