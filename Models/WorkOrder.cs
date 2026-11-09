@@ -42,11 +42,11 @@ public partial class WorkOrder
     [Column("eq_id")]
     public int EqId { get; set; }
 
-    [Column("date_start")]
-    public DateOnly? DateStart { get; set; }
+    [Column("date_start", TypeName = "timestamp without time zone")]
+    public DateTime? DateStart { get; set; }
 
-    [Column("date_end")]
-    public DateOnly? DateEnd { get; set; }
+    [Column("date_end", TypeName = "timestamp without time zone")]
+    public DateTime? DateEnd { get; set; }
 
     [ForeignKey("BrigadeId")]
     [InverseProperty("WorkOrders")]

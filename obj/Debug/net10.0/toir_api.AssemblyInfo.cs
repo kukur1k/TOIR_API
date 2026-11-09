@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("toir_api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ce2337c6cd7e8eea4a7acf20060a6589b6707ef2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+22a5ba94e1472136c7f74d7ef99cb5cb41d5e3d9")]
 [assembly: System.Reflection.AssemblyProductAttribute("toir_api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("toir_api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

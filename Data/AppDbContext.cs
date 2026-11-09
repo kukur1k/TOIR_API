@@ -47,6 +47,7 @@ public partial class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("new_TOIR");
+
         modelBuilder.Entity<Brigade>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("brigade_pkey");

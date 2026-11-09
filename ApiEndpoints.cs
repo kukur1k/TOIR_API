@@ -664,6 +664,8 @@ public static class ApiEndpoints
             return Api.Ok(order, $"Задача {order.Id} успешно завершена мастером {uid}");
         });
 
+
+
         g.MapPut("/{id:Int}/close", async (int id, JwtService jwt, HttpContext ctx, AppDbContext db) =>
         {
             //Нужно пересчитывать время простоя оборудования
@@ -677,13 +679,23 @@ public static class ApiEndpoints
 
             if (order.StatusWo != "выполнена") return Api.Conflict("Задача еще не выполнена");
 
+
             order.StatusWo = "закрыта";
             await db.SaveChangesAsync();
 
-            return Api.Ok(order, $"Задача {order.Id} успешно закрыта мастерос {uid}");
+            var downtime = CalculateTime.calculateDowntimeHours(order.DateStart, order.DateEnd);
+
+            return Api.Ok(order, $"Задача {order.Id} успешно закрыта мастер {uid} / Время простоя оборудования - {downtime}");
         });
+
+        
+
+
     }
 }
     
+
+
+
 
 
