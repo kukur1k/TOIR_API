@@ -159,10 +159,10 @@ public static class ApiEndpoints
             var countActiveOrders = await db.WorkOrders
                 .CountAsync(o => o.MasterId == uid && statuses.Contains(o.StatusWo));
             var countActiveOrdersLost = await db.WorkOrders
-                .CountAsync(o => o.MasterId == uid && statuses.Contains(o.StatusWo) && o.DateEnd < DateOnly.FromDateTime(DateTime.UtcNow));
+                .CountAsync(o => o.MasterId == uid && statuses.Contains(o.StatusWo) && o.DateEnd < DateTime.UtcNow);
 
             var nowPlanOrders = await db.WorkOrders
-                .CountAsync(o => o.DateStart == DateOnly.FromDateTime(DateTime.Now) && o.MasterId == uid);
+                .CountAsync(o => o.DateStart == DateTime.Now && o.MasterId == uid);
             var nowCreateOrders = await db.WorkOrders
                 .CountAsync(o => o.DateCreate == DateTime.Now && o.MasterId == uid);
 
