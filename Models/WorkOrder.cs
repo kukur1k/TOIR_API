@@ -48,6 +48,9 @@ public partial class WorkOrder
     [Column("date_end", TypeName = "timestamp without time zone")]
     public DateTime? DateEnd { get; set; }
 
+    [Column("downtime_hours")]
+    public int? DowntimeHours { get; set; }
+
     [ForeignKey("BrigadeId")]
     [InverseProperty("WorkOrders")]
     public virtual Brigade Brigade { get; set; } = null!;

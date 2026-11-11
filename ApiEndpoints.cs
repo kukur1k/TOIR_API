@@ -683,9 +683,15 @@ public static class ApiEndpoints
 
 
             order.StatusWo = "закрыта";
-            await db.SaveChangesAsync();
 
             var downtime = CalculateTime.calculateDowntimeHours(order.DateStart, order.DateEnd);
+
+            order.DowntimeHours+= downtime;
+
+            await db.SaveChangesAsync();
+
+            
+
 
             return Api.Ok(order, $"Задача {order.Id} успешно закрыта мастер {uid} / Время простоя оборудования - {downtime}");
         });
