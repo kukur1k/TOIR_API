@@ -18,6 +18,7 @@ public static class ApiEndpoints
         MapTypesTO(app);
         MapSchedule(app);
         MapWO(app);
+        MapUser(app);
     }
 
 
@@ -131,6 +132,22 @@ public static class ApiEndpoints
         db.RefreshTokens.Add(token);
         await db.SaveChangesAsync();
         return token;
+    }
+
+    static void MapUser(WebApplication app)
+    {
+        var g = app.MapGroup("/users").WithTags("Users").RequireAuthorization();
+
+        g.MapGet("/me", async (JwtService jwt, AppDbContext db, HttpContext ctx) =>
+        {
+            var uid = jwt.GetUserId(ctx.User);
+
+            var user = await db.Users.Where(x => x.Id == uid).FirstOrDefaultAsync();
+
+            if (user is null) return Api.NotFound("Пользователь не найден");
+            
+            return Api.Ok(user);
+        });
     }
 
     static void MapDashBoard(WebApplication app)
