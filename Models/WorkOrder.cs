@@ -48,6 +48,12 @@ public partial class WorkOrder
     [Column("date_end", TypeName = "timestamp without time zone")]
     public DateTime? DateEnd { get; set; }
 
+    [Column("plan_date_start", TypeName = "timestamp without time zone")]
+    public DateTime? PlanDateStart { get; set; }
+
+    [Column("plan_date_end", TypeName = "timestamp without time zone")]
+    public DateTime? PlanDateEnd { get; set; }
+
     [Column("downtime_hours")]
     public int? DowntimeHours { get; set; }
 

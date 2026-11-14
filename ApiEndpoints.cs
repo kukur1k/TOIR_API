@@ -282,6 +282,7 @@ public static class ApiEndpoints
             var equipment = await db.Equipment.Where(x => x.Workshop.MasterId == uid)
                 .Select(x => new
                 {
+                    x.Id,
                     x.InventNumber,
                     x.Name,
                     x.Model,

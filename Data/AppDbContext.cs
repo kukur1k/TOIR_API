@@ -47,6 +47,36 @@ public partial class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("new_TOIR");
+        modelBuilder.HasPostgresExtension("pg_catalog", "adminpack");
+
+        
+    // public async Task<List<SheduleUpcomingTO?>> GetUpcomingTO()
+    // {
+    //     try
+    //     {
+    //         var res = await client.GetFromJsonAsync<ApiResponse<List<SheduleUpcomingTO?>>>("/dashboard/upcoming-to");
+    //         return res?.data;
+    //     } catch (Exception ex)
+    //     {
+    //         Console.WriteLine(ex.Message);
+    //         return null;
+    //     }
+     
+    // }
+
+
+    
+    // public async Task<string> LoadSheduleUpcomingToAsync()
+    // {
+    //     var res = await ApiService.Instance.GetUpcomingTO();
+    //     if (res is null)
+    //     {
+    //         return "error";
+    //     }
+    //     SheduleUpcTo = res;
+    //     return "";
+
+    // }
 
         modelBuilder.Entity<Brigade>(entity =>
         {
