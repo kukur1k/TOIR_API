@@ -1,4 +1,4 @@
-@toir_api_HostAddress = http://localhost:5043
+@toir_api_HostAddress = http://localhost:5333
 
 GET {{toir_api_HostAddress}}/weatherforecast/
 Accept: application/json

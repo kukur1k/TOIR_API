@@ -23,6 +23,7 @@ public record RefreshRequest(
 public record TableOrderResponse(
     string Id,
     string Eq,
+    string Priority,
     string ColorCodePriority,
     string Status,
     string StatusColor,
