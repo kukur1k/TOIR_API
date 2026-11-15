@@ -330,7 +330,11 @@ public static class ApiEndpoints
                     x.Id.ToString(),
                     x.Eq.Name,
                     x.Priority,
-                    x.Priority == "высокий" ? ("rgb(255, 0, 0)") : null,
+                    x.Priority == "критический" ? ("rgb(255, 0, 0)")
+                                : x.Priority == "высокий" ? ("rgb(255, 155, 0)")
+                                : x.Priority == "средний" ? ("rgb(255, 255, 0)")
+                                : x.Priority == "низкий" ? ("rgb(0, 255, 0)")
+                                : "",
                     x.StatusWo,
                     x.StatusWo == "закрыта" ? ("rgb(93, 93, 91)")
                     : x.StatusWo == "отменена" ? ("rgb(255, 0, 0)")
