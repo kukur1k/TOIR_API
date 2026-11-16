@@ -319,6 +319,35 @@ public static class ApiEndpoints
             return Api.Ok(equipment);
         }).RequireAuthorization();
 
+
+        g.MapGet("/{id:int}", async (int id,  HttpContext ctx, JwtService jwt, AppDbContext db) =>
+        {
+            var uid = jwt.GetUserId(ctx.User);
+
+            // зелёный - в работе, жёлтый - в ремонте, оранжевый - в простое, серый - выведено
+
+            var equipment = await db.Equipment.Where(x => x.Workshop.MasterId == uid && x.Id == id)
+                .Select(x => new
+                {
+                    Id = x.Id.ToString(),
+                    x.InventNumber,
+                    x.Name,
+                    x.Model,
+                    x.Manufacture,
+                    x.DateStartWork,
+                    x.EqStatus,
+                    StatusColor = x.EqStatus == "в работе" ? "rgb(0, 255, 0)"
+                                : x.EqStatus == "в ремонте" ? "rgb(255, 255, 0)"
+                                : x.EqStatus == "в простое" ? "rgb(255, 100, 0)"
+                                : x.EqStatus == "выведено" ? "rgb(102, 102, 102)"
+                                : null
+                    
+                }).ToListAsync();
+
+            return Api.Ok(equipment);
+        });
+
+
         g.MapGet("/work-orders/{eqId:Int}", async (int eqId, HttpContext ctx, JwtService jwt, AppDbContext db) =>
         {
 
