@@ -147,6 +147,7 @@ public static class ApiEndpoints
             if (user is null) return Api.NotFound("Пользователь не найден");
             
             return Api.Ok(user);
+            // нужно вывести еще цех
         });
     }
 
