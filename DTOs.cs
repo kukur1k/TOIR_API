@@ -44,14 +44,29 @@ public record ScheduleToResponse(
         string Date
     );
 
-    public record EqRequest(
-        string? InvNumber,
-        string? Name, string? Model,
-        string? SerialNumber, DateOnly? ExpStart,
-        DateOnly? WorkStart, string? Manifacture,
-        DateOnly? WarrancyDate, string? Workshop,
-        string? Status
-    );
+    // public record EqRequest(
+    //     string? InvNumber,
+    //     string? Name, string? Model,
+    //     string? SerialNumber, DateOnly? ExpStart,
+    //     DateOnly? WorkStart, string? Manifacture,
+    //     DateOnly? WarrancyDate, string? Workshop,
+    //     string? Status
+    // );
+
+    public class EqRequest
+{
+    public int Id { get; set; }
+    public string? InventNumber { get; set; }
+    public string? Name { get; set; }
+    public string? Model { get; set; }
+    public DateOnly? DateStartWork { get; set; }
+    public DateOnly? DateStartExp { get; set; }
+    public string? Manufacture { get; set; }
+    public DateOnly? WarrancyTime { get; set; }
+    public string? SerialNumber { get; set; }
+    public string? Workshop { get; set; }
+    public string? EqStatus { get; set; }
+}
 
     public record TypeToRequest(string? Title, string? Description, string? Interval);
 

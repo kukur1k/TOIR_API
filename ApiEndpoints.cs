@@ -395,20 +395,21 @@ public static class ApiEndpoints
             if (ws is null) return Api.NotFound("Склад не найден");
 
             var s = new[] {"в работе","в ремонте", "в простое","выведено"};
-            if (!s.Contains(eq.Status)) return Api.NotFound("Статус не валиден");
+            if (!s.Contains(eq.EqStatus)) return Api.NotFound("Статус не валиден");
 
             var e = new Equipment
             {
-                InventNumber = eq.InvNumber,
+                InventNumber = eq.InventNumber,
                 Name = eq.Name,
-                Model = eq.Name,
+                Model = eq.Model,
                 SerialNumber = eq.SerialNumber,
-                DateStartExp = eq.ExpStart,
-                DateStartWork = eq.WorkStart,
+                DateStartExp = eq.DateStartExp,
+                DateStartWork = eq.DateStartWork,
                 Manufacture = eq.Name,
-                WarrancyTime = eq.WarrancyDate,
+                WarrancyTime = eq.WarrancyTime,
                 WorkshopId = ws!.Id,
-                EqStatus = eq.Status
+                Workshop = ws!,
+                EqStatus = eq.EqStatus
             };
 
             await db.Equipment.AddAsync(e);
@@ -439,17 +440,17 @@ public static class ApiEndpoints
             var eq = await db.Equipment.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (eq == null) Api.NotFound("Оборудование не найдено");
 
-            if (req.ExpStart != null) eq.DateStartExp = req.ExpStart;
-            if (req.WorkStart != null) eq.DateStartWork = req.ExpStart;
+            if (req.DateStartExp     != null) eq.DateStartExp = req.DateStartExp;
+            if (req.DateStartWork != null) eq.DateStartWork = req.DateStartWork;
             if (req.Model != null) eq.Model = req.Model;
             if (req.Name != null) eq.Name = req.Name;
-            if (req.Manifacture != null) eq.Manufacture = req.Manifacture;
+            if (req.Manufacture != null) eq.Manufacture = req.Manufacture;
             if (req.SerialNumber != null) eq.SerialNumber = req.SerialNumber;
-            if (req.Status != null)
+            if (req.EqStatus != null)
             {
                 var s = new[] {"в работе","в ремонте", "в простое","выведено"};
-                if (!s.Contains(req.Status)) return Api.NotFound("Статус не валиден");
-                eq.EqStatus = req.Status;
+                if (!s.Contains(req.EqStatus)) return Api.NotFound("Статус не валиден");
+                eq.EqStatus = req.EqStatus;
             } 
             if (req.Workshop != null)
             {
@@ -460,7 +461,7 @@ public static class ApiEndpoints
             }
 
             await db.SaveChangesAsync();
-            return Api.Ok(eq);
+            return Api.Ok(eq.Id, $"изменено оборудование {eq.Id}");
         }).RequireAuthorization();
 
     }
@@ -604,6 +605,8 @@ public static class ApiEndpoints
                 x.BrigadeId,
                 x.EqId,
                 x.StatusTo,
+                StatusColor = x.StatusTo == "отменено" || x.StatusTo == "просрочено" ? "rgb(255, 0, 0)"
+                    : "rgb(0, 255, 0)",
                 ToTitle = x.To.Title,
                 BrigadeName = x.Brigade.Title,
                 EqName = x.Eq.Name
