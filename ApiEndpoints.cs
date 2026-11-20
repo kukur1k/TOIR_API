@@ -302,7 +302,12 @@ public static class ApiEndpoints
                                 : x.EqStatus == "в ремонте" ? "rgb(255, 255, 0)"
                                 : x.EqStatus == "в простое" ? "rgb(255, 100, 0)"
                                 : x.EqStatus == "выведено" ? "rgb(102, 102, 102)"
-                                : null
+                                : null,
+                    x.DateStartExp,
+                    x.SerialNumber,
+                    x.WarrancyTime,
+                    Workshop = x.Workshop.Title,
+                    x.WorkshopId
                     
                 }).ToListAsync();
 
@@ -757,9 +762,6 @@ public static class ApiEndpoints
             order.DowntimeHours+= downtime;
 
             await db.SaveChangesAsync();
-
-            
-
 
             return Api.Ok(order, $"Задача {order.Id} успешно закрыта мастер {uid} / Время простоя оборудования - {downtime}");
         });
