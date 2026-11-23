@@ -615,6 +615,11 @@ public static class ApiEndpoints
             return Api.Ok(res);
         }).RequireAuthorization();
 
+
+        // •	Кнопка «Добавить запись ТО» - открывает модальное окно с формой для добавления планового ТО.
+        //  Поля формы: оборудование (выбор из списка с поиском), вид ТО (выпадающий список),
+        //   плановая дата (выбор даты, должна быть не ранее текущей даты),
+        //  бригада (опционально, выбор из списка). При сохранении клиент добавляет запись в график
         g.MapPost("/", async (SheduleToRequest req, JwtService jwt, HttpContext ctx, AppDbContext db) =>
         {
             var hasEq = await db.TypeTos.AnyAsync(x => x.Id == req.ToId);
@@ -637,6 +642,10 @@ public static class ApiEndpoints
         }).RequireAuthorization();
 
         
+
+         //•	Кнопка «Создать заявку» в строке записи графика - автоматически создаёт заявку на основе записи графика,
+        //  заполняя все поля (оборудование, вид ТО, плановые даты, описание по умолчанию из шаблона).
+        // При успешном создании клиент открывает карточку созданной заявки.
 
         g.MapPost("/{sheduleToId:Int}/work-order", async (int sheduleToId, WorkOrderRequest req, JwtService jwt, AppDbContext db, HttpContext ctx) =>
         {
@@ -687,6 +696,7 @@ public static class ApiEndpoints
     static void MapWO(WebApplication app)
     {
         var g = app.MapGroup("/work-orders").WithTags("Work Orders").RequireAuthorization();
+
 
         g.MapPost("/{id:Int}/enter-brigade", async (int id, int brigadeId, JwtService jwt, HttpContext ctx, AppDbContext db) =>
         {
