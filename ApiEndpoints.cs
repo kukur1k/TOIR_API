@@ -689,6 +689,8 @@ public static class ApiEndpoints
                 DateEnd = req.dateEnd
             };
 
+            await db.WorkOrders.AddAsync(newOrder);
+            await db.SaveChangesAsync();
             return Api.Created(newOrder, $"/calendar-to/work-order/{newOrder.Id}");
         });
     }
