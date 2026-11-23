@@ -670,7 +670,7 @@ public static class ApiEndpoints
             if (!stat.Contains(req.StatusWo)) return Api.Conflict("Некорректное значение статуса");
             if (!type.Contains(req.TypeWo)) return Api.Conflict("Некорректное значение типа");
 
-            if (req.dateStart < DateTime.Now) return Api.Conflict("Дата начала не может быть раньше чем сегодня");
+            if (req.dateStart < DateTime.Today) return Api.Conflict("Дата начала не может быть раньше чем сегодня");
             if (req.dateStart > req.dateEnd) return Api.Conflict("Дата начала не может быть позже чем дата окончания");
 
             if (req.TypeWo != "аварийная" && req.Reason != null) return Api.Conflict("Причина указывается толко для аварийных заявок");
@@ -685,8 +685,8 @@ public static class ApiEndpoints
                 MasterId = uid,
                 BrigadeId = brigadeId,
                 EqId = eqId,
-                DateStart = req.dateStart,
-                DateEnd = req.dateEnd
+                PlanDateStart = req.dateStart,
+                PlanDateEnd = req.dateEnd
             };
 
             await db.WorkOrders.AddAsync(newOrder);
