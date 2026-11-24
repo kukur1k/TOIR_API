@@ -177,7 +177,7 @@ public static class ApiEndpoints
             var countActiveOrders = await db.WorkOrders
                 .CountAsync(o => o.MasterId == uid && statuses.Contains(o.StatusWo));
             var countActiveOrdersLost = await db.WorkOrders
-                .CountAsync(o => o.MasterId == uid && statuses.Contains(o.StatusWo) && o.DateEnd < DateTime.UtcNow);
+                .CountAsync(o => o.MasterId == uid && statuses.Contains(o.StatusWo) && o.DateEnd < DateTime.UtcNow || o.DateEnd==null);
 
             var nowPlanOrders = await db.WorkOrders
                 .CountAsync(o => o.DateStart == DateTime.Now && o.MasterId == uid);
