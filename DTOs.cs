@@ -75,3 +75,5 @@ public record ScheduleToResponse(
     public record SheduleToRequest(DateOnly Date, int ToId, int BrigadeId, int EqId);
 
     public record WorkOrderRequest(string TypeWo, string Priority, string StatusWo, string Description, string? Reason, DateTime dateStart, DateTime dateEnd);
+
+    public record FullWorkOrderRequest(string TypeWo, string Priority, string StatusWo, int EqId, int brigadeId, string Description, string? Reason, DateTime dateStart, DateTime dateEnd);

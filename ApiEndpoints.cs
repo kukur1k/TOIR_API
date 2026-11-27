@@ -693,12 +693,55 @@ public static class ApiEndpoints
             await db.SaveChangesAsync();
             return Api.Created(newOrder, $"/calendar-to/work-order/{newOrder.Id}");
         });
+
+        
     }
 
     static void MapWO(WebApplication app)
     {
         var g = app.MapGroup("/work-orders").WithTags("Work Orders").RequireAuthorization();
 
+         g.MapPost("/", async (FullWorkOrderRequest req, JwtService jwt, AppDbContext db, HttpContext ctx) =>
+        {
+            var uid = jwt.GetUserId(ctx.User);
+
+            var prior = new[] {"низкий", "средний", "высокий", "критический"};
+            var stat = new[] {"создана",
+			"назначена",
+			"в работе",
+			"ожидает материалов",
+			"выполнена",
+			"закрыта",
+			"отменена"};
+            var type = new[] {"плановая", "аварийная", "текущая"};
+
+            if (!prior.Contains(req.Priority)) return Api.Conflict("Некорректное значение приоритета");
+            if (!stat.Contains(req.StatusWo)) return Api.Conflict("Некорректное значение статуса");
+            if (!type.Contains(req.TypeWo)) return Api.Conflict("Некорректное значение типа");
+
+            if (req.dateStart < DateTime.Today) return Api.Conflict("Дата начала не может быть раньше чем сегодня");
+            if (req.dateStart > req.dateEnd) return Api.Conflict("Дата начала не может быть позже чем дата окончания");
+
+            if (req.TypeWo != "аварийная" && req.Reason != null) return Api.Conflict("Причина указывается толко для аварийных заявок");
+
+            var newOrder = new WorkOrder()
+            {
+                TypeWo = req.TypeWo,
+                Priority = req.Priority,
+                StatusWo = req.StatusWo,
+                DateCreate = DateTime.Now,
+                Reason = req.Reason,
+                MasterId = uid,
+                BrigadeId = req.brigadeId,
+                EqId = req.EqId,
+                PlanDateStart = req.dateStart,
+                PlanDateEnd = req.dateEnd
+            };
+
+            await db.WorkOrders.AddAsync(newOrder);
+            await db.SaveChangesAsync();
+            return Api.Created(newOrder, $"/work-order/{newOrder.Id}");
+        });
 
         g.MapPost("/{id:Int}/enter-brigade", async (int id, int brigadeId, JwtService jwt, HttpContext ctx, AppDbContext db) =>
         {
