@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using TOIR_API.Data;
@@ -19,6 +20,7 @@ public static class ApiEndpoints
         MapSchedule(app);
         MapWO(app);
         MapUser(app);
+        MapBrigades(app);
     }
 
 
@@ -828,6 +830,27 @@ public static class ApiEndpoints
 
 
     }
+
+
+    static void MapBrigades(WebApplication app)
+    {
+        var g = app.MapGroup("/brigades").WithTags("Brigades").RequireAuthorization();
+
+        g.MapGet("/", async (AppDbContext db, JwtService jwt, HttpContext ctx) =>
+        {
+            var uid = jwt.GetUserId(ctx.User);
+
+            var brigades = await db.Brigades.Select(x => new{
+                x.Id,
+                x.Title}).ToListAsync();
+
+            return Api.Ok(brigades);
+
+        });
+            
+        
+    }
+
 }
     
 
